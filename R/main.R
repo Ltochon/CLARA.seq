@@ -184,6 +184,359 @@ clara_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
 }
 
 
+#' CLARANS clustering
+#' @description With the help of TraMineR package, CLARANS clustering provide a clustering of big dataset.\cr The main objective is to cluster state sequences with the "LCS" distance calculation method to find the best partition in N clusters. \cr \cr WARNING : this function is less efficient than cLARA.
+#'
+#' @import TraMineR
+#' @import cluster
+#' @import dplyr
+#' @import doParallel
+#'
+#' @param data The dataset to use. In case of sequences, use seqdef (from TraMineR package) to create such an object.
+#' @param nb_cluster The number of medoids
+#' @param method The calculation method to compute the distance matrix. (See the function seqdist in TraMineR package)
+#' @param maxneighbours Number of neighbours to explore to find a better clustering
+#' @param numlocal Number of initialisation of the starting medoids
+#' @param plot Boolean variable to plot the result of clustering
+#' @param cores Number of cores to use for parallelism
+#'
+#' @return An object with the data, the medoids id (name of the line), the clustering and the distance matrix
+#' @export
+#'
+#' @examples
+#'
+#'\dontrun{
+#' library(TraMineR)
+#' data(biofam)
+#' #Basic CLARA Computing
+#' my_cluster <- clarans_clust(seqdef(biofam), method="LCS", cores = 15)
+#' }
+
+clarans_clust <- function(data, nb_cluster, method = "LCS", maxneighbours = 100, numlocal = 4, plot = FALSE, cores = 2){
+  message("\nCLARANS ALGORITHM\n")
+  start.time<-proc.time()
+  '%ni%' = Negate('%in%')
+  mincost <- Inf
+  cl <- detectCores() %>% -1 %>% makeCluster
+  registerDoParallel(cl)
+  final_list = list()
+  for(i in 1:numlocal){
+    medoids <- sample(1:length(data[,1]),nb_cluster) #choose random med
+    while(anyDuplicated(data[medoids,]) > 0){ #check if 2 meds have same value
+      medoids <- sample(1:length(data[,1]),nb_cluster)
+    }
+    calc_diss <- foreach(j=1:nb_cluster, .packages = c('TraMineR', 'cluster'), .combine = 'c', .multicombine = TRUE, .init = list()) %dopar%{
+      diss_current <- cbind(suppressMessages(seqdist(data, refseq = medoids[j], method = method, with.missing = TRUE))) #get matrix dissimilarity
+      list(diss_current)
+    }
+    diss_current <- as.data.frame(do.call(cbind, calc_diss))
+    diss_test <- diss_current
+    current_sum <- sum(apply(diss_current, 1,min))
+    j = 1
+    calc_bestseq <- foreach(j = 1:maxneighbours, .packages = c('TraMineR', 'cluster'), .combine = 'c', .multicombine = TRUE, .init = list(list(),list(),list())) %dopar%{
+      next_iter = 0
+      while(next_iter == 0){
+        out_medoid <- sample(1:nb_cluster,1)
+        candidate <- sample(setdiff(1:length(data[,1]),medoids),1)
+        while(nrow(merge(data[candidate,],data[medoids,]))>1){ #test if candidate has same value than a medoid
+          candidate <- sample(setdiff(1:length(data[,1]),medoids),1)
+        }
+        diss_candidate <- suppressMessages(seqdist(data, refseq = candidate, method = method, with.missing = TRUE)) #get matrix dissimilarity
+        diss_test[,out_medoid] <- diss_candidate
+        test_sum <- sum(apply(diss_test, 1,min))
+        if(test_sum < current_sum){
+          medoids[out_medoid] <- candidate
+          diss_current <- diss_test
+          current_sum <- test_sum
+        }
+        else{
+          next_iter = 1
+        }
+      }
+      if(j == maxneighbours){
+        list(current_sum,medoids,diss_current)
+      }
+    }
+    final_list <- c(final_list,calc_bestseq[4:length(calc_bestseq)])
+  }
+  stopCluster(cl)
+  all_diss <- final_list[seq_along(final_list) %% 3 == 0]
+  all_medoids <- final_list[seq_along(final_list) %% 3 == 2]
+  all_sum <- final_list[seq_along(final_list) %% 3 == 1]
+  #création de la classe
+  bestcluster <- list(seq = data, id.med = all_medoids[[which.min(all_sum)]], clusters = apply(all_diss[[which.min(all_sum)]], 1,which.min), diss = all_diss[[which.min(all_sum)]])#création de l'objet à retourner
+
+  message("Table of Iteration's Distance")
+  nb_char <- nchar(length(all_sum))#calcul de la longueur du numéro du dernier cluster
+  nb_precision <- 17 #on définit le nombre de caractères pour une distance avec la précision maximale (14 décimales)
+  nb_max_med <- nchar(length(data[,1])) * nb_cluster + (nb_cluster-1)*2
+  txt = ""
+  t <- c()
+  for(print_dist in 1:length(all_sum)){
+    t <- c(t,mean(apply(all_diss[[print_dist]], 1, min)))
+    #affichage des distances 5 par 5
+    if(print_dist %% 2 == 1){
+      txt = paste0(txt,"\nN°",print_dist, strrep(" ",nb_char - nchar(print_dist)), " (Med: ", toString(all_medoids[[print_dist]]), ")", strrep(" ",nb_max_med - nchar(toString(all_medoids[[print_dist]]))) ," : ",mean(apply(all_diss[[print_dist]], 1, min)), strrep(" ",nb_precision - nchar(mean(apply(all_diss[[print_dist]], 1, min)))))
+    }
+    else {
+      txt = paste0(txt,"  ", "N°",print_dist, strrep(" ",nb_char - nchar(print_dist)),  " (Med: ", toString(all_medoids[[print_dist]]), ")", strrep(" ",nb_max_med - nchar(toString(all_medoids[[print_dist]]))) , " : ",mean(apply(all_diss[[print_dist]], 1, min)), strrep(" ",nb_precision - nchar(mean(apply(all_diss[[print_dist]], 1, min)))))
+    }
+  }
+  message(txt)
+  #affichage du minimum
+  message("\n[>] Minimum Distance for iteration N°", (which.min(all_sum)),"\n")
+
+  ##########
+  #Affichage des graphs
+  ##########
+  if(plot){
+    par(mfrow = c(1,1))
+    #affichage du graph de variation des distances pour un nombre condensé de sample
+    plot(sapply(seq_along(all_diss), function(x){min(t[1:x])}), type = "o", main = "Evolution of the mean distance", xlab = "NumLocal number", ylab = "Mean distance value", col ="blue", pch = 19, lwd = 1)
+    seqdplot(data, apply(all_diss[[which.min(all_sum)]], 1,which.min), main = "Cluster")
+  }
+  end.time<-proc.time() #fin du processus
+  message("Calculation time : ", (end.time-start.time)[3], " sec.")
+  return(bestcluster)
+}
+
+#' FUZZY-CLARA clustering
+#' @description With the help of TraMineR package, FUZZY-CLARA clustering provide a clustering of big dataset.\cr The main objective is to cluster state sequences with the "LCS" distance calculation method to find the best partition in N clusters. \cr This function is a mix between CLARA and the ROBUST FUZZY C-MEDOIDS. \cr \cr WARNING : This function is not finished yet !
+#'
+#' @import TraMineR
+#' @import cluster
+#' @import dplyr
+#' @import doParallel
+#'
+#' @param data The dataset to use. In case of sequences, use seqdef (from TraMineR package) to create such an object.
+#' @param nb_sample The number of subsets to test.
+#' @param size_sample The size of each subset
+#' @param nb_cluster The number of medoids
+#' @param method The calculation method to compute the distance matrix. (See the function seqdist in TraMineR package)
+#' @param fuzzifier Value of the fuzzifier (default is 2, which is the traditionnal value)
+#' @param p Number of candidate to test to be a better medoid
+#' @param threshold Variable to exclude outliers, whose values are greater than threshold
+#' @param max_iter Number of maximal iteration to do to find the set of medoids
+#' @param noise Small value to avoid divisions by 0 error
+#' @param plot Boolean variable to plot the result of clustering
+#' @param cores Number of cores to use for parallelism
+#'
+#' @return An object with the data, the medoids id (name of the line), the clustering and the distance matrix
+#' @export
+#'
+#' @examples
+#'
+#'\dontrun{
+#' library(TraMineR)
+#' data(biofam)
+#' #Basic CLARA Computing
+#' my_cluster <- fuzzy_clust(seqdef(biofam),nb_sample = 14, size_sample = 50, plot = TRUE, threshold = 7, max_iter = 10, p=5)
+#' }
+fuzzy_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, nb_cluster = 4, method = "LCS", fuzzyfier = 2, p = 5, threshold = 10, max_iter = 10, noise = 0.5, plot = FALSE){
+  if(nb_cluster > size_sample){
+    stop("Too many cluster requested")
+  }
+  message("ROBUST FUZZY C-MEDOIDS ALGORITHM")
+  cl <- detectCores() %>% -1 %>% makeCluster
+  registerDoParallel(cl)
+  start.time <- proc.time() #debut du processus
+  calc_fuzzy <- foreach(loop=1:nb_sample, .packages = c('TraMineR'), .combine = 'c', .multicombine = TRUE, .init = list()) %dopar%{ #on stocke chaque sample
+    # for(loop in nb_sample){
+    data_subset <- data[sample(nrow(data), size_sample),]
+    diss <- suppressMessages(seqdist(data_subset, method = method, with.missing = TRUE)) #get matrix dissimilarity
+    med = rownames(data_subset)[sample(size_sample, nb_cluster)]
+    unique <- 0
+    while(unique < 1){
+      unique <- 1
+      for(m in 1:nb_cluster){
+        for(n in 1:nb_cluster){
+          if(m != n){
+            if(seqcomp(data_subset[match(med[m],rownames(data_subset)),],data_subset[match(med[n],rownames(data_subset)),])){
+              tab <- match(med,rownames(data_subset))
+              med[m] <- rownames(data_subset)[sample(c(1:length(data_subset[,1]))[-c(match(med,rownames(data_subset)))],1)]
+              unique <- 0
+            }
+          }
+        }
+      }
+    }
+    med_old = c(0)
+    med_old2 = c(0)
+    iter = 0
+    stop = 0
+    while(stop == 0){
+      not_valid <- c()
+      tab_harm <- c()
+      membership <- data.frame()
+      for(i in 1:length(data_subset[,1])){
+        u_tot <- c()
+        d <- diss[match(med,rownames(data_subset)),i]
+        for(j in 1:nb_cluster){
+          u_up <- (1/(d[j]+noise))^(1/(fuzzyfier-1))
+          u_down <- sum((1/(d+noise))^(1/(fuzzyfier-1)))
+          u_tot <- c(u_tot,u_up/u_down)
+        }
+        tab_harm <- c(tab_harm,(sum((1/(d+noise))^(1/(fuzzyfier-1))))^(1-fuzzyfier))
+        if((sum((1/(d+noise))^(1/(fuzzyfier-1))))^(1-fuzzyfier) < threshold){
+          membership <- rbind(membership, u_tot)
+        }
+        else{
+          not_valid <- c(not_valid,i)
+        }
+      }
+      if(is.null(not_valid)){
+        rownames(membership) <- make.names(rownames(data_subset))
+      }
+      else{
+        rownames(membership) <- make.names(rownames(data_subset)[-not_valid])
+      }
+      med_old2 <- med_old
+      med_old <- med
+      for(i in 1:nb_cluster){
+        xpi <- order(membership[,i], decreasing = TRUE)[1:(p+nb_cluster)]
+        if(sum(match(med,substring(row.names(membership),2)) %in% xpi) > 0){
+          index_na <- match(match(med,substring(row.names(membership),2)),xpi)
+          index <- index_na[!is.na(index_na)]
+          nb_index_delete <- nb_cluster - sum(match(med,substring(row.names(membership),2)) %in% xpi)
+          xpi <- xpi[-index]
+          xpi <- xpi[1:(length(xpi)-nb_index_delete)]
+        }
+        else{
+          xpi <- xpi[1:(length(xpi)-nb_cluster)]
+        }
+        xpi <- xpi[!is.na(xpi)]
+        q_min = Inf
+        q_index_min = med[i]
+        if(length(xpi) != 0){
+          for(j in 1:length(xpi)){
+            a <- data_subset[which(rownames(data_subset) == substring(rownames(membership)[xpi[j]],2)),]
+            b_index <- match(med,rownames(data_subset))
+            double <- 0
+            for(t in 1:length(b_index)){
+              if(seqcomp(a,data_subset[b_index[t],])){
+                double <- 1
+              }
+            }
+            if(double < 1){
+              q = (membership[xpi[j],i]^fuzzyfier)*sum(diss[match(substring(row.names(membership[xpi[j],]),2),rownames(data_subset)),])
+              if(q < q_min){
+                q_min <- q
+                q_index_min = substring(rownames(membership)[xpi[j]],2)
+              }
+            }
+          }
+          med[i] = q_index_min
+        }
+      }
+      iter = iter + 1
+      if(setequal(med_old2,med) || iter >= max_iter){
+        stop = 1
+      }
+    }
+    ##############################################
+    #############################################
+    diss_final <- data.frame()
+    for(i in 1:length(med)){
+      if(i == 1){
+        diss_final <- cbind(suppressMessages(seqdist(data, refseq = which(row.names(data)==med[i]), method = method, with.missing = TRUE))) #get matrix dissimilarity
+      }
+      else{
+        diss_final <- cbind(diss_final,suppressMessages(seqdist(data, refseq = which(row.names(data)==med[i]), method = method, with.missing = TRUE))) #get matrix dissimilarity
+
+      }
+    }
+
+    membership <- data.frame()
+    for(i in 1:length(data[,1])){
+      u_tot <- c()
+      d <- diss_final[i,]
+      for(j in 1:nb_cluster){
+        u_up <- (1/(d[j]+noise))^(1/(fuzzyfier-1))
+        u_down <- sum((1/(d+noise))^(1/(fuzzyfier-1)))
+        u_tot <- c(u_tot,u_up/u_down)
+      }
+      membership <- rbind(membership, u_tot)
+    }
+    q <- 0
+    for(i in 1:nb_cluster){
+      q <- q + (membership[which(rownames(data) == med[i]),i]^fuzzyfier)*sum(diss_final[i,])
+    }
+    q <- q / nb_cluster
+    mean_diss <-mean(apply(membership, 1,max))
+    diss_clustering <- apply(membership, 1,which.max)
+    list(diss_final,mean_diss,diss_clustering,med,tab_harm,iter,membership,q)
+  }
+  stopCluster(cl)
+  all_diss <- calc_fuzzy[1:length(calc_fuzzy)][seq_along(calc_fuzzy[1:length(calc_fuzzy)]) %% 8 == 1]
+  mean_all_diss <- calc_fuzzy[1:length(calc_fuzzy)][seq_along(calc_fuzzy[1:length(calc_fuzzy)]) %% 8 == 2]
+  clustering_all_diss <- calc_fuzzy[1:length(calc_fuzzy)][seq_along(calc_fuzzy[1:length(calc_fuzzy)]) %% 8 == 3]
+  med_all_diss <- calc_fuzzy[1:length(calc_fuzzy)][seq_along(calc_fuzzy[1:length(calc_fuzzy)]) %% 8 == 4]
+  harm_all <- calc_fuzzy[1:length(calc_fuzzy)][seq_along(calc_fuzzy[1:length(calc_fuzzy)]) %% 8 == 5]
+  iter_all <- calc_fuzzy[1:length(calc_fuzzy)][seq_along(calc_fuzzy[1:length(calc_fuzzy)]) %% 8 == 6]
+  all_memb <- calc_fuzzy[1:length(calc_fuzzy)][seq_along(calc_fuzzy[1:length(calc_fuzzy)]) %% 8 == 7]
+  all_q <- calc_fuzzy[1:length(calc_fuzzy)][seq_along(calc_fuzzy[1:length(calc_fuzzy)]) %% 8 == 0]
+  message("\nTable of objective function values")
+  nb_char = nchar(length(mean_all_diss))#calcul de la longueur du numéro du dernier cluster
+  nb_max_med_col1 <- 0
+  nb_max_med_col2 <- 0
+  for(p in 1:length(med_all_diss)){
+    if(p %% 2 == 1){
+      if(nb_max_med_col1 < sum(nchar(unlist(med_all_diss[[p]])))){
+        nb_max_med_col1 <- sum(nchar(unlist(med_all_diss[[p]])))
+      }
+    }
+    else{
+      if(nb_max_med_col2 < sum(nchar(unlist(med_all_diss[[p]])))){
+        nb_max_med_col2 <- sum(nchar(unlist(med_all_diss[[p]])))
+      }
+    }
+  }
+  nb_precision1  <- 0
+  nb_precision2 <- 0
+  for(p in 1:length(mean_all_diss)){
+    if(p %% 2 == 1){
+      if(nb_precision1 < nchar(unlist(all_q[[p]]))){
+        nb_precision1 <- nchar(unlist(all_q[[p]]))
+      }
+    }
+    else{
+      if(nb_precision2 < nchar(unlist(all_q[[p]]))){
+        nb_precision2 <- nchar(unlist(all_q[[p]]))
+      }
+    }
+  }
+  txt = ""
+  for(print_dist in 1:length(mean_all_diss)){
+    if(print_dist %% 2 == 1){
+      #affichage des distances 5 par 5
+      txt = paste0(txt,"\nN°",print_dist, strrep(" ",nb_char - nchar(print_dist)), " (Med: ", toString(med_all_diss[[print_dist]]), ")",  strrep(" ",nb_max_med_col1 - sum(nchar(unlist(med_all_diss[[print_dist]])))) ," : ",all_q[[print_dist]], strrep(" ",nb_precision1 + 2 - nchar(unlist(all_q[[print_dist]]))))
+    }
+    else {
+      txt = paste0(txt, "|", strrep(" ",2), "N°",print_dist, strrep(" ",nb_char - nchar(print_dist)), " (Med: ", toString(med_all_diss[[print_dist]]), ")",  strrep(" ",nb_max_med_col2 - sum(nchar(unlist(med_all_diss[[print_dist]])))) ," : ",all_q[[print_dist]], strrep(" ",nb_precision2 + 2 - nchar(unlist(all_q[[print_dist]]))))
+    }
+
+  }
+  message(txt)
+  #affichage du minimum
+  message("\n[>] Minimum Index for Sample N°", (which.min(all_q)),"\n")
+  #création de la classe
+  bestcluster <- list(seq = data, id.med = med_all_diss[[which.min(all_q)]], clusters = clustering_all_diss[[which.min(all_q)]], diss = all_diss[[which.min(all_q)]], harm_value = harm_all[[which.min(all_q)]], nb_iter = iter_all[[which.min(all_q)]], membership = all_memb[[which.min(all_q)]], q = all_q)#création de l'objet à retourner
+
+  ##########
+  #Affichage des graphs
+  ##########
+  if(plot){
+    par(mfrow = c(1,1))
+    #affichage du graph de variation des distances pour un nombre condensé de sample
+    plot(sapply(seq_along(all_q), function(x){min(unlist(all_q)[1:x])}), type = "o", main = "Evolution of the objective function", xlab = "Iteration number", ylab = "Index value", col ="blue", pch = 19, lwd = 1)
+    seqdplot(data, clustering_all_diss[[which.min(all_q)]], main = "Cluster")
+  }
+  end.time<-proc.time() #fin du processus
+  message("Calcul time : ", (end.time-start.time)[3], " sec.")
+  return(bestcluster)
+}
+
+
 #' Davies Bouldin Index
 #' @description Implementation of Davies-Bouldin index to evaluate the quality of CLARA Clustering.
 #'
@@ -204,6 +557,7 @@ clara_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
 #'\dontrun{
 #' my_index <- db_index(my_cluster, "LCS", diss = FALSE)
 #'}
+
 davies_bouldin <- function(seq_obj, method, diss = TRUE, plot = TRUE, cores = 2){
   message("\nDAVIES-BOULDIN INDEX\n")
   start.time <- proc.time() #debut du processus
