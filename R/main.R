@@ -17,9 +17,8 @@ library(doParallel) #librairie pour le paralellisme
 #' @param nb_cluster The number of medoids
 #' @param method The calculation method to compute the distance matrix. (See the function seqdist in TraMineR package)
 #' @param plot Boolean variable to plot the result of clustering
-#' @param improve_method Addind an improve method to find better subsets to test (increase the calculation cost)
-#' @param nbessai_improved The number of tries to find the best subset to test with the improve method
-#' @param percent_improve The percent of nb_sample using improve_method
+#' @param find_best_method Method to select the best subset. "Distance" is for the mean distance and "DB" is for Davies-Bouldin value.
+#' @param with.diss Boolean if the distance matrix should be returned
 #' @param cores Number of cores to use for parallelism
 #'
 #' @return An object with the data, the medoids id (name of the line), the clustering and the distance matrix
@@ -38,12 +37,12 @@ library(doParallel) #librairie pour le paralellisme
 #' }
 
 
-clara_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, nb_cluster = 4, method = "LCS", plot = FALSE, find_best_method = "Distance", with.diss = TRUE){
+clara_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, nb_cluster = 4, method = "LCS", plot = FALSE, find_best_method = "Distance", with.diss = TRUE, cores = 2){
   message("\nCLARA ALGORITHM Improved\n")
   if(nb_cluster > size_sample){
     stop("Too many cluster requested")
   }
-  cl <- detectCores() %>% -1 %>% makeCluster
+  cl <- cores %>% makeCluster
   registerDoParallel(cl)
   start.time <- proc.time() #debut du processus
   calc_pam <- foreach(loop=1:nb_sample, .packages = c('TraMineR', 'cluster'), .combine = 'c', .multicombine = TRUE, .init = list()) %dopar%{ #on stocke chaque sample
@@ -124,7 +123,7 @@ clara_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
     bestcluster <- list(seq = data, id.med = med_all_diss[[which.min(mean_all_diss)]], clusters = clustering_all_diss[[which.min(mean_all_diss)]])#création de l'objet à retourner
   }
   ####diss
-  message(paste("\nTable of Sample's Value with", find_best_method, "Method"))
+  message(paste("\nTable of Sample's Values with", find_best_method, "Method"))
   nb_char = nchar(length(mean_all_diss))#calcul de la longueur du numéro du dernier cluster
   nb_max_med_col1 <- 0
   nb_max_med_col2 <- 0
@@ -173,19 +172,14 @@ clara_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
   #Affichage des graphs
   ##########
   if(plot){
-    # par(mfrow = c(ceiling((nb_cluster+1)/ceiling(sqrt(nb_cluster+1))),ceiling(sqrt(nb_cluster+1))))
-    mean_clustering_compressed = c()
-    #affichage du graph de variation des distances pour un nombre condensé de sample
-    for(squareroot in 1:ceiling(sqrt(length(mean_all_diss)))){
-      index_debut = floor(length(mean_all_diss)/floor(sqrt(length(mean_all_diss))))*squareroot-floor(length(mean_all_diss)/floor(sqrt(length(mean_all_diss))))+1
-      index_fin = floor(length(mean_all_diss)/floor(sqrt(length(mean_all_diss))))*squareroot
-      mean_clustering_compressed = c(mean_clustering_compressed, mean(unlist(mean_all_diss)[index_debut:index_fin], na.rm = TRUE))
-    }
-    plot(mean_clustering_compressed,type = "o", main = paste("Evolution of sample's value with", find_best_method,"method"), xlab = "Floored square root of the sample number", ylab = "Index value", col ="blue", pch = 19, lwd = 1)
+    par(mfrow = c(1,1))
+    m <- sapply(seq_along(mean_all_diss),function(x){min(unlist(mean_all_diss)[1:x])})
+    index <- c(1,unlist(lapply(1:9,function(x){x*floor(nb_sample/9)})))
+    plot(m[index],type = "o", main = paste("Evolution of sample's value with", find_best_method,"method"), xlab = "Iteration Number", ylab = paste(find_best_method ,"value"), col ="blue", pch = 19, lwd = 1)
     seqdplot(data, group = clustering_all_diss[[which.min(mean_all_diss)]], main = "Cluster")
   }
   end.time<-proc.time() #fin du processus
-  message("Calcul time : ", (end.time-start.time)[3], " sec.")
+  message("Calculation time : ", (end.time-start.time)[3], " sec.")
   return(bestcluster)
 }
 
@@ -210,7 +204,7 @@ clara_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
 #'\dontrun{
 #' my_index <- db_index(my_cluster, "LCS", diss = FALSE)
 #'}
-davies_bouldin <- function(seq_obj, method, diss = TRUE, plot = TRUE){
+davies_bouldin <- function(seq_obj, method, diss = TRUE, plot = TRUE, cores = 2){
   message("\nDAVIES-BOULDIN INDEX\n")
   start.time <- proc.time() #debut du processus
   sum_DB <- 0
@@ -218,7 +212,7 @@ davies_bouldin <- function(seq_obj, method, diss = TRUE, plot = TRUE){
   dev_DB = c()
   list_diam <- vector(mode = "list", length = length(seq_obj$id.med))
   if(diss == FALSE){
-    cl <- detectCores() %>% -1 %>% makeCluster
+    cl <- cores %>% makeCluster
     registerDoParallel(cl)
     calc_diss <- foreach(i=1:length(seq_obj$id.med), .packages = c('TraMineR', 'cluster'), .combine = 'c', .multicombine = TRUE, .init = list()) %dopar%{ #on stocke chaque sample
       diss <- cbind(suppressMessages(seqdist(seq_obj$seq, refseq = which(rownames(seq_obj$seq) == seq_obj$id.med[i]), method = method, with.missing = TRUE))) #get matrix dissimilarity
