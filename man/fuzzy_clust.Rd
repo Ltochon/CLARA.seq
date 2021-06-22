@@ -16,7 +16,7 @@ fuzzy_clust(
   max_iter = 10,
   noise = 0.5,
   plot = FALSE,
-  cores = 2
+  cores = detectCores() - 1
 )
 }
 \arguments{

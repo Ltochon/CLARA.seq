@@ -4,7 +4,13 @@
 \alias{davies_bouldin}
 \title{Davies Bouldin Index}
 \usage{
-davies_bouldin(seq_obj, method, diss = TRUE, plot = TRUE, cores = 2)
+davies_bouldin(
+  seq_obj,
+  method,
+  diss = TRUE,
+  plot = TRUE,
+  cores = detectCores() - 1
+)
 }
 \arguments{
 \item{seq_obj}{The object generated with CLARA Clustering}

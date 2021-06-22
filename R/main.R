@@ -1,7 +1,7 @@
-library(TraMineR)
-library(cluster)
-library(dplyr)
-library(doParallel) #librairie pour le paralellisme
+# library(TraMineR)
+# library(cluster)
+# library(dplyr)
+# library(doParallel) #librairie pour le paralellisme
 
 #' CLARA clustering
 #' @description With the help of TraMineR package, CLARA clustering provide a clustering of big dataset.\cr The main objective is to cluster state sequences with the "LCS" distance calculation method to find the best partition in N clusters.
@@ -10,6 +10,7 @@ library(doParallel) #librairie pour le paralellisme
 #' @import cluster
 #' @import dplyr
 #' @import doParallel
+#' @import parallel
 #'
 #' @param data The dataset to use. In case of sequences, use seqdef (from TraMineR package) to create such an object.
 #' @param nb_sample The number of subsets to test.

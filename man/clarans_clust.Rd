@@ -11,7 +11,7 @@ clarans_clust(
   maxneighbours = 100,
   numlocal = 4,
   plot = FALSE,
-  cores = 2
+  cores = detectCores() - 1
 )
 }
 \arguments{

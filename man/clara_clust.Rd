@@ -13,7 +13,7 @@ clara_clust(
   plot = FALSE,
   find_best_method = "Distance",
   with.diss = TRUE,
-  cores = 2
+  cores = detectCores() - 1
 )
 }
 \arguments{
