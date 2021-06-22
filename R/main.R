@@ -214,7 +214,7 @@ clara_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
 #' my_cluster <- clarans_clust(seqdef(biofam), method="LCS", cores = 15)
 #' }
 
-clarans_clust <- function(data, nb_cluster, method = "LCS", maxneighbours = 100, numlocal = 4, plot = FALSE, cores = detectCores()-1){
+clarans_clust <- function(data, nb_cluster = 4, method = "LCS", maxneighbours = 100, numlocal = 4, plot = FALSE, cores = detectCores()-1){
   message("\nCLARANS ALGORITHM\n")
   start.time<-proc.time()
   '%ni%' = Negate('%in%')
