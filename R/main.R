@@ -114,10 +114,10 @@ clara_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
       diss <- cbind(suppressMessages(seqdist(data, refseq = which(rownames(data) == med_all_diss[[which.min(mean_all_diss)]][i]), method = method, with.missing = TRUE))) #get matrix dissimilarity
       list(diss)
     }
-    stopCluster(cl)
-    names(calc_diss) <- 1:length(calc_diss)
-    diss <- do.call(cbind,calc_diss)
-    bestcluster <- list(seq = data, id.med = med_all_diss[[which.min(mean_all_diss)]], clusters = clustering_all_diss[[which.min(mean_all_diss)]], diss = diss)#création de l'objet à retourner
+  stopCluster(cl)
+  names(calc_diss) <- 1:length(calc_diss)
+  diss <- do.call(cbind,calc_diss)
+  bestcluster <- list(seq = data, id.med = med_all_diss[[which.min(mean_all_diss)]], clusters = clustering_all_diss[[which.min(mean_all_diss)]], diss = diss)#création de l'objet à retourner
 
   }
   else{
