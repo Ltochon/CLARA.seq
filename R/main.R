@@ -42,8 +42,8 @@ clara_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
   if(nb_cluster > size_sample){
     stop("Too many cluster requested")
   }
-  cl <- cores %>% makeCluster
-  registerDoParallel(cl)
+  cl <- cores %>% doParallel::makeCluster
+  doParallel::registerDoParallel(cl)
   start.time <- proc.time() #debut du processus
   calc_pam <- foreach(loop=1:nb_sample, .packages = c('TraMineR', 'cluster'), .combine = 'c', .multicombine = TRUE, .init = list()) %dopar%{ #on stocke chaque sample
     # for(loop in 1:10){
@@ -100,20 +100,20 @@ clara_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
 
     list(mean_diss,diss_clustering,med)
   }
-  stopCluster(cl)
+  doParallel::stopCluster(cl)
   mean_all_diss <- calc_pam[1:length(calc_pam)][seq_along(calc_pam[1:length(calc_pam)]) %% 3 == 1]
   clustering_all_diss <- calc_pam[1:length(calc_pam)][seq_along(calc_pam[1:length(calc_pam)]) %% 3 == 2]
   med_all_diss <- calc_pam[1:length(calc_pam)][seq_along(calc_pam[1:length(calc_pam)]) %% 3 == 0]
 
   ####diss
   if(with.diss){
-    cl <- detectCores() %>% -1 %>% makeCluster
-    registerDoParallel(cl)
+    cl <- cores %>% doParallel::makeCluster
+    doParallel::registerDoParallel(cl)
     calc_diss <- foreach(i=1:length(med_all_diss[[which.min(mean_all_diss)]]), .packages = c('TraMineR', 'cluster'), .combine = 'c', .multicombine = TRUE, .init = list()) %dopar%{ #on stocke chaque sample
       diss <- cbind(suppressMessages(seqdist(data, refseq = which(rownames(data) == med_all_diss[[which.min(mean_all_diss)]][i]), method = method, with.missing = TRUE))) #get matrix dissimilarity
       list(diss)
     }
-    stopCluster(cl)
+    doParallel::stopCluster(cl)
     names(calc_diss) <- 1:length(calc_diss)
     diss <- do.call(cbind,calc_diss)
     bestcluster <- list(seq = data, id.med = med_all_diss[[which.min(mean_all_diss)]], clusters = clustering_all_diss[[which.min(mean_all_diss)]], diss = diss)#création de l'objet à retourner
@@ -217,8 +217,8 @@ clarans_clust <- function(data, nb_cluster, method = "LCS", maxneighbours = 100,
   start.time<-proc.time()
   '%ni%' = Negate('%in%')
   mincost <- Inf
-  cl <- cores %>% makeCluster
-  registerDoParallel(cl)
+  cl <- cores %>% doParallel::makeCluster
+  doParallel::registerDoParallel(cl)
   final_list = list()
   for(i in 1:numlocal){
     medoids <- sample(1:length(data[,1]),nb_cluster) #choose random med
