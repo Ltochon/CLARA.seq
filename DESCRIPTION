@@ -1,7 +1,7 @@
 Package: CLARA.seq
 Type: Package
 Title: CLARA Clustering
-Version: 0.1.0
+Version: 1.1.0
 Author: Louis Tochon (with Matthias Studer)
 Maintainer: Louis Tochon <louis.tochon@etu.unige.ch>
 Description: Clustering algorithm (CLARA) to handle big datasets and index to evaluate the quality of the partition. This package works with the help of TraMineR's package for distance calulations. 
