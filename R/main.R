@@ -11,6 +11,7 @@
 #' @import dplyr
 #' @import doParallel
 #' @import parallel
+#' @import foreach
 #'
 #' @param data The dataset to use. In case of sequences, use seqdef (from TraMineR package) to create such an object.
 #' @param nb_sample The number of subsets to test.
