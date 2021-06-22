@@ -15,7 +15,8 @@ fuzzy_clust(
   threshold = 10,
   max_iter = 10,
   noise = 0.5,
-  plot = FALSE
+  plot = FALSE,
+  cores = 2
 )
 }
 \arguments{
@@ -29,6 +30,8 @@ fuzzy_clust(
 
 \item{method}{The calculation method to compute the distance matrix. (See the function seqdist in TraMineR package)}
 
+\item{fuzzyfier}{Value of the fuzzifier (default is 2, which is the traditionnal value)}
+
 \item{p}{Number of candidate to test to be a better medoid}
 
 \item{threshold}{Variable to exclude outliers, whose values are greater than threshold}
@@ -38,8 +41,6 @@ fuzzy_clust(
 \item{noise}{Small value to avoid divisions by 0 error}
 
 \item{plot}{Boolean variable to plot the result of clustering}
-
-\item{fuzzifier}{Value of the fuzzifier (default is 2, which is the traditionnal value)}
 
 \item{cores}{Number of cores to use for parallelism}
 }

@@ -217,7 +217,7 @@ clarans_clust <- function(data, nb_cluster, method = "LCS", maxneighbours = 100,
   start.time<-proc.time()
   '%ni%' = Negate('%in%')
   mincost <- Inf
-  cl <- detectCores() %>% -1 %>% makeCluster
+  cl <- cores %>% makeCluster
   registerDoParallel(cl)
   final_list = list()
   for(i in 1:numlocal){
@@ -313,7 +313,7 @@ clarans_clust <- function(data, nb_cluster, method = "LCS", maxneighbours = 100,
 #' @param size_sample The size of each subset
 #' @param nb_cluster The number of medoids
 #' @param method The calculation method to compute the distance matrix. (See the function seqdist in TraMineR package)
-#' @param fuzzifier Value of the fuzzifier (default is 2, which is the traditionnal value)
+#' @param fuzzyfier Value of the fuzzifier (default is 2, which is the traditionnal value)
 #' @param p Number of candidate to test to be a better medoid
 #' @param threshold Variable to exclude outliers, whose values are greater than threshold
 #' @param max_iter Number of maximal iteration to do to find the set of medoids
@@ -332,12 +332,12 @@ clarans_clust <- function(data, nb_cluster, method = "LCS", maxneighbours = 100,
 #' #Basic CLARA Computing
 #' my_cluster <- fuzzy_clust(seqdef(biofam),nb_sample = 14, size_sample = 50, plot = TRUE, threshold = 7, max_iter = 10, p=5)
 #' }
-fuzzy_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, nb_cluster = 4, method = "LCS", fuzzyfier = 2, p = 5, threshold = 10, max_iter = 10, noise = 0.5, plot = FALSE){
+fuzzy_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, nb_cluster = 4, method = "LCS", fuzzyfier = 2, p = 5, threshold = 10, max_iter = 10, noise = 0.5, plot = FALSE, cores = 2){
   if(nb_cluster > size_sample){
     stop("Too many cluster requested")
   }
   message("ROBUST FUZZY C-MEDOIDS ALGORITHM")
-  cl <- detectCores() %>% -1 %>% makeCluster
+  cl <- cores %>% makeCluster
   registerDoParallel(cl)
   start.time <- proc.time() #debut du processus
   calc_fuzzy <- foreach(loop=1:nb_sample, .packages = c('TraMineR'), .combine = 'c', .multicombine = TRUE, .init = list()) %dopar%{ #on stocke chaque sample
