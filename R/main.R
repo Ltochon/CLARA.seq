@@ -37,7 +37,7 @@ library(doParallel) #librairie pour le paralellisme
 #' }
 
 
-clara_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, nb_cluster = 4, method = "LCS", plot = FALSE, find_best_method = "Distance", with.diss = TRUE, cores = 2){
+clara_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, nb_cluster = 4, method = "LCS", plot = FALSE, find_best_method = "Distance", with.diss = TRUE, cores = detectCores()-1){
   message("\nCLARA ALGORITHM Improved\n")
   if(nb_cluster > size_sample){
     stop("Too many cluster requested")
@@ -212,7 +212,7 @@ clara_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
 #' my_cluster <- clarans_clust(seqdef(biofam), method="LCS", cores = 15)
 #' }
 
-clarans_clust <- function(data, nb_cluster, method = "LCS", maxneighbours = 100, numlocal = 4, plot = FALSE, cores = 2){
+clarans_clust <- function(data, nb_cluster, method = "LCS", maxneighbours = 100, numlocal = 4, plot = FALSE, cores = detectCores()-1){
   message("\nCLARANS ALGORITHM\n")
   start.time<-proc.time()
   '%ni%' = Negate('%in%')
@@ -332,7 +332,7 @@ clarans_clust <- function(data, nb_cluster, method = "LCS", maxneighbours = 100,
 #' #Basic CLARA Computing
 #' my_cluster <- fuzzy_clust(seqdef(biofam),nb_sample = 14, size_sample = 50, plot = TRUE, threshold = 7, max_iter = 10, p=5)
 #' }
-fuzzy_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, nb_cluster = 4, method = "LCS", fuzzyfier = 2, p = 5, threshold = 10, max_iter = 10, noise = 0.5, plot = FALSE, cores = 2){
+fuzzy_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, nb_cluster = 4, method = "LCS", fuzzyfier = 2, p = 5, threshold = 10, max_iter = 10, noise = 0.5, plot = FALSE, cores = detectCores()-1){
   if(nb_cluster > size_sample){
     stop("Too many cluster requested")
   }
@@ -558,7 +558,7 @@ fuzzy_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
 #' my_index <- db_index(my_cluster, "LCS", diss = FALSE)
 #'}
 
-davies_bouldin <- function(seq_obj, method, diss = TRUE, plot = TRUE, cores = 2){
+davies_bouldin <- function(seq_obj, method, diss = TRUE, plot = TRUE, cores = detectCores()-1){
   message("\nDAVIES-BOULDIN INDEX\n")
   start.time <- proc.time() #debut du processus
   sum_DB <- 0
