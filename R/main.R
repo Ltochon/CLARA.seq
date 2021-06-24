@@ -303,7 +303,7 @@ clarans_clust <- function(data, nb_cluster, distargs = list(method = "LCS"), max
     par(mfrow = c(1,1))
     #affichage du graph de variation des distances pour un nombre condensé de sample
     plot(sapply(seq_along(all_diss), function(x){min(t[1:x])}), type = "o", main = "Evolution of the mean distance", xlab = "NumLocal number", ylab = "Mean distance value", col ="blue", pch = 19, lwd = 1)
-    seqdplot(data, apply(all_diss[[which.min(all_sum)]], 1,which.min), main = "Cluster")
+    # seqdplot(data, apply(all_diss[[which.min(all_sum)]], 1,which.min), main = "Cluster")
   }
   end.time<-proc.time() #fin du processus
   message("Calculation time : ", (end.time-start.time)[3], " sec.")
@@ -545,7 +545,7 @@ fuzzy_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
     par(mfrow = c(1,1))
     #affichage du graph de variation des distances pour un nombre condensé de sample
     plot(sapply(seq_along(all_q), function(x){min(unlist(all_q)[1:x])}), type = "o", main = "Evolution of the objective function", xlab = "Iteration number", ylab = "Index value", col ="blue", pch = 19, lwd = 1)
-    seqdplot(data, clustering_all_diss[[which.min(all_q)]], main = "Cluster")
+    # seqdplot(data, clustering_all_diss[[which.min(all_q)]], main = "Cluster")
   }
   end.time<-proc.time() #fin du processus
   message("Calcul time : ", (end.time-start.time)[3], " sec.")
