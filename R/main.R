@@ -181,7 +181,8 @@ clara_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
     par(mfrow = c(1,1))
     m <- sapply(seq_along(mean_all_diss),function(x){min(unlist(mean_all_diss)[1:x])})
     index <- c(1,unlist(lapply(1:9,function(x){x*floor(nb_sample/9)})))
-    plot(m[index],type = "o", main = paste("Evolution of sample's value with", find_best_method,"method"), xlab = "Iteration Number", ylab = paste(find_best_method ,"value"), col ="blue", pch = 19, lwd = 1)
+    plot(m[index],type = "o", main = paste("Evolution of sample's value with", find_best_method,"method"), xlab = "Iteration Number", ylab = paste(find_best_method ,"value"), col ="blue", pch = 19, lwd = 1, xaxt = "n")
+    axis(1, at = 1:10, labels = index)
     # seqdplot(data, group = clustering_all_diss[[which.min(mean_all_diss)]], main = "Cluster")
   }
   end.time<-proc.time() #fin du processus
