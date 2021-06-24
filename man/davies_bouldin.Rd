@@ -19,7 +19,7 @@ davies_bouldin(
 
 \item{diss}{Boolean to express if the parameter diss from CLARA.seq clustering has been returned (Matrix size must be k columns and n rows - see refseq function from TraMineR package)}
 
-\item{plot}{Boolean variable to plot the result}
+\item{plot}{Boolean variable to plot the research convergence}
 
 \item{cores}{Number of cores to use for parallelism}
 }

@@ -6,7 +6,7 @@
 \usage{
 clarans_clust(
   data,
-  nb_cluster,
+  nb_cluster = 4,
   method = "LCS",
   maxneighbours = 100,
   numlocal = 4,
@@ -25,7 +25,7 @@ clarans_clust(
 
 \item{numlocal}{Number of initialisation of the starting medoids}
 
-\item{plot}{Boolean variable to plot the result of clustering}
+\item{plot}{Boolean variable to plot the research convergence}
 
 \item{cores}{Number of cores to use for parallelism}
 }

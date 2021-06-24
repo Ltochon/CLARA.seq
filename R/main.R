@@ -17,7 +17,7 @@
 #' @param nb_sample The number of subsets to test.
 #' @param size_sample The size of each subset
 #' @param nb_cluster The number of medoids
-#' @param method The calculation method to compute the distance matrix. (See the function seqdist in TraMineR package)
+#' @param distargs List with method parameters to apply. (See the function seqdist in TraMineR package)
 #' @param plot Boolean variable to plot the result of clustering
 #' @param find_best_method Method to select the best subset. "Distance" is for the mean distance and "DB" is for Davies-Bouldin value.
 #' @param with.diss Boolean if the distance matrix should be returned
@@ -39,29 +39,34 @@
 #' }
 
 
-clara_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, nb_cluster = 4, method = "LCS", plot = FALSE, find_best_method = "Distance", with.diss = TRUE, cores = detectCores()-1){
+clara_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, nb_cluster = 4, distargs = list(method = "LCS"), plot = FALSE, find_best_method = "Distance", with.diss = TRUE){
   message("\nCLARA ALGORITHM Improved\n")
   if(nb_cluster > size_sample){
     stop("Too many cluster requested")
   }
-  cl <- cores %>% makeCluster
+  cl <- detectCores() %>% -1 %>% makeCluster
   registerDoParallel(cl)
   start.time <- proc.time() #debut du processus
   calc_pam <- foreach(loop=1:nb_sample, .packages = c('TraMineR', 'cluster'), .combine = 'c', .multicombine = TRUE, .init = list()) %dopar%{ #on stocke chaque sample
     # for(loop in 1:10){
+    distargs$refseq <- NULL
     data_subset <- data[sample(nrow(data), size_sample),]
-    diss <- suppressMessages(seqdist(data_subset, method = method, with.missing = TRUE)) #get matrix dissimilarity
+    distargs$seqdata <- data_subset
+    diss2 <- suppressMessages(seqdist(data_subset, method = distargs$method, with.missing = TRUE)) #get matrix dissimilarity
+    suppressMessages(diss <- do.call(seqdist, distargs))
     clustering <- pam(diss,nb_cluster,diss = TRUE, pamonce = 2) #PAM sur la matrice de distance avec fastestPAM
     med <- rownames(data_subset)[clustering$id.med]
     diss <- data.frame()
+    distargs$seqdata <- data
     for(i in 1:length(med)){
-      print("ok")
+      distargs$refseq <- which(row.names(data)==med[i])
       if(i == 1){
-        diss <- cbind(suppressMessages(seqdist(data, refseq = which(row.names(data)==med[i]), method = method, with.missing = TRUE))) #get matrix dissimilarity
+        # diss <- cbind(suppressMessages(seqdist(data, refseq = which(row.names(data)==med[i]), method = method, with.missing = TRUE))) #get matrix dissimilarity
+        diss <- cbind(suppressMessages(diss <- do.call(seqdist, distargs)))
       }
       else{
-        diss <- cbind(diss,suppressMessages(seqdist(data, refseq = which(row.names(data)==med[i]), method = method, with.missing = TRUE))) #get matrix dissimilarity
-
+        # diss <- cbind(diss,suppressMessages(seqdist(data, refseq = which(row.names(data)==med[i]), method = method, with.missing = TRUE))) #get matrix dissimilarity
+        diss <- cbind(diss,suppressMessages(diss <- do.call(seqdist, distargs)))
       }
     }
     diss_clustering <- apply(diss, 1,which.min)
@@ -106,23 +111,25 @@ clara_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
   mean_all_diss <- calc_pam[1:length(calc_pam)][seq_along(calc_pam[1:length(calc_pam)]) %% 3 == 1]
   clustering_all_diss <- calc_pam[1:length(calc_pam)][seq_along(calc_pam[1:length(calc_pam)]) %% 3 == 2]
   med_all_diss <- calc_pam[1:length(calc_pam)][seq_along(calc_pam[1:length(calc_pam)]) %% 3 == 0]
-
   ####diss
   if(with.diss){
-  cl <- cores %>% makeCluster
-  registerDoParallel(cl)
-  calc_diss <- foreach(i=1:length(med_all_diss[[which.min(mean_all_diss)]]), .packages = c('TraMineR', 'cluster'), .combine = 'c', .multicombine = TRUE, .init = list()) %dopar%{ #on stocke chaque sample
-      diss <- cbind(suppressMessages(seqdist(data, refseq = which(rownames(data) == med_all_diss[[which.min(mean_all_diss)]][i]), method = method, with.missing = TRUE))) #get matrix dissimilarity
+    cl <- detectCores() %>% -1 %>% makeCluster
+    registerDoParallel(cl)
+    calc_diss <- foreach(i=1:length(med_all_diss[[which.min(mean_all_diss)]]), .packages = c('TraMineR', 'cluster'), .combine = 'c', .multicombine = TRUE, .init = list()) %dopar%{ #on stocke chaque sample
+      # diss <- cbind(suppressMessages(seqdist(data, refseq = which(rownames(data) == med_all_diss[[which.min(mean_all_diss)]][i]), method = method, with.missing = TRUE))) #get matrix dissimilarity
+      distargs$seqdata <- data
+      distargs$refseq <- which(rownames(data) == med_all_diss[[which.min(mean_all_diss)]][i])
+      diss <- cbind(suppressMessages(diss <- do.call(seqdist, distargs)))
       list(diss)
     }
-  stopCluster(cl)
-  names(calc_diss) <- 1:length(calc_diss)
-  diss <- do.call(cbind,calc_diss)
-  bestcluster <- list(seq = data, id.med = med_all_diss[[which.min(mean_all_diss)]], clusters = clustering_all_diss[[which.min(mean_all_diss)]], diss = diss, evol.diss = unlist(mean_all_diss))#création de l'objet à retourner
+    stopCluster(cl)
+    names(calc_diss) <- 1:length(calc_diss)
+    diss <- do.call(cbind,calc_diss)
+    bestcluster <- list(seq = data, id.med = med_all_diss[[which.min(mean_all_diss)]], clusters = clustering_all_diss[[which.min(mean_all_diss)]], diss = diss, evol.diss = sapply(seq_along(mean_all_diss),function(x){min(unlist(mean_all_diss)[1:x])}), plot = function(){plot(bestcluster$evol.diss[c(1,unlist(lapply(1:9,function(x){x*floor(nb_sample/9)})))],type = "o", main = paste("Evolution of sample's value with", find_best_method,"method"), xlab = "Iteration Number", ylab = paste(find_best_method ,"value"), col ="blue", pch = 19, lwd = 1)})#création de l'objet à retourner
 
   }
   else{
-    bestcluster <- list(seq = data, id.med = med_all_diss[[which.min(mean_all_diss)]], clusters = clustering_all_diss[[which.min(mean_all_diss)]], evol.diss = unlist(mean_all_diss))#création de l'objet à retourner
+    bestcluster <- list(seq = data, id.med = med_all_diss[[which.min(mean_all_diss)]], clusters = clustering_all_diss[[which.min(mean_all_diss)]], evol.diss = sapply(seq_along(mean_all_diss),function(x){min(unlist(mean_all_diss)[1:x])}), plot = function(){plot(bestcluster$evol.diss[c(1,unlist(lapply(1:9,function(x){x*floor(nb_sample/9)})))],type = "o", main = paste("Evolution of sample's value with", find_best_method,"method"), xlab = "Iteration Number", ylab = paste(find_best_method ,"value"), col ="blue", pch = 19, lwd = 1)})#création de l'objet à retourner
   }
   ####diss
   message(paste("\nTable of Sample's Values with", find_best_method, "Method"))
@@ -178,7 +185,7 @@ clara_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
     m <- sapply(seq_along(mean_all_diss),function(x){min(unlist(mean_all_diss)[1:x])})
     index <- c(1,unlist(lapply(1:9,function(x){x*floor(nb_sample/9)})))
     plot(m[index],type = "o", main = paste("Evolution of sample's value with", find_best_method,"method"), xlab = "Iteration Number", ylab = paste(find_best_method ,"value"), col ="blue", pch = 19, lwd = 1)
-    # seqdplot(data, group = clustering_all_diss[[which.min(mean_all_diss)]], main = "Cluster")
+    seqdplot(data, group = clustering_all_diss[[which.min(mean_all_diss)]], main = "Cluster")
   }
   end.time<-proc.time() #fin du processus
   message("Calculation time : ", (end.time-start.time)[3], " sec.")
@@ -300,7 +307,7 @@ clarans_clust <- function(data, nb_cluster = 4, method = "LCS", maxneighbours = 
   }
   end.time<-proc.time() #fin du processus
   message("Calculation time : ", (end.time-start.time)[3], " sec.")
-  class(bestcluster) <- c("clarans", "partition")
+  class(bestcluster) <- c("CLARANS", "partition")
   return(bestcluster)
 }
 
@@ -537,7 +544,7 @@ fuzzy_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
   }
   end.time<-proc.time() #fin du processus
   message("Calcul time : ", (end.time-start.time)[3], " sec.")
-  class(bestcluster) <- c("clara-fuzzy", "partition")
+  class(bestcluster) <- c("CLARA-FUZZY", "partition")
   return(bestcluster)
 }
 

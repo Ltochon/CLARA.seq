@@ -40,7 +40,7 @@ fuzzy_clust(
 
 \item{noise}{Small value to avoid divisions by 0 error}
 
-\item{plot}{Boolean variable to plot the result of clustering}
+\item{plot}{Boolean variable to plot the research convergence}
 
 \item{cores}{Number of cores to use for parallelism}
 }
