@@ -28,5 +28,5 @@ At this moment, a dataset with 227'000 sequences has been tested and perfectly c
 
 ## Documentation
 The complete documentation is available in the folder *Documentation*
-[User guide](https://github.com/Ltochon/CLARA.seq/blob/master/Documentation/user_guide.pdf)
-[Package Documentation](https://github.com/Ltochon/CLARA.seq/blob/master/Documentation/CLARA.seq_0.1.0.pdf)
+- [User guide](https://github.com/Ltochon/CLARA.seq/blob/master/Documentation/user_guide.pdf)
+- [Package Documentation](https://github.com/Ltochon/CLARA.seq/blob/master/Documentation/CLARA.seq_0.1.0.pdf)
