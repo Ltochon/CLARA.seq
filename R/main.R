@@ -118,11 +118,11 @@ clara_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
   stopCluster(cl)
   names(calc_diss) <- 1:length(calc_diss)
   diss <- do.call(cbind,calc_diss)
-  bestcluster <- list(seq = data, id.med = med_all_diss[[which.min(mean_all_diss)]], clusters = clustering_all_diss[[which.min(mean_all_diss)]], diss = diss)#création de l'objet à retourner
+  bestcluster <- list(seq = data, id.med = med_all_diss[[which.min(mean_all_diss)]], clusters = clustering_all_diss[[which.min(mean_all_diss)]], diss = diss, evol.diss = unlist(mean_all_diss))#création de l'objet à retourner
 
   }
   else{
-    bestcluster <- list(seq = data, id.med = med_all_diss[[which.min(mean_all_diss)]], clusters = clustering_all_diss[[which.min(mean_all_diss)]])#création de l'objet à retourner
+    bestcluster <- list(seq = data, id.med = med_all_diss[[which.min(mean_all_diss)]], clusters = clustering_all_diss[[which.min(mean_all_diss)]], evol.diss = unlist(mean_all_diss))#création de l'objet à retourner
   }
   ####diss
   message(paste("\nTable of Sample's Values with", find_best_method, "Method"))
@@ -178,10 +178,11 @@ clara_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
     m <- sapply(seq_along(mean_all_diss),function(x){min(unlist(mean_all_diss)[1:x])})
     index <- c(1,unlist(lapply(1:9,function(x){x*floor(nb_sample/9)})))
     plot(m[index],type = "o", main = paste("Evolution of sample's value with", find_best_method,"method"), xlab = "Iteration Number", ylab = paste(find_best_method ,"value"), col ="blue", pch = 19, lwd = 1)
-    seqdplot(data, group = clustering_all_diss[[which.min(mean_all_diss)]], main = "Cluster")
+    # seqdplot(data, group = clustering_all_diss[[which.min(mean_all_diss)]], main = "Cluster")
   }
   end.time<-proc.time() #fin du processus
   message("Calculation time : ", (end.time-start.time)[3], " sec.")
+  class(bestcluster) <- c("clara", "partition")
   return(bestcluster)
 }
 
@@ -199,7 +200,7 @@ clara_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
 #' @param method The calculation method to compute the distance matrix. (See the function seqdist in TraMineR package)
 #' @param maxneighbours Number of neighbours to explore to find a better clustering
 #' @param numlocal Number of initialisation of the starting medoids
-#' @param plot Boolean variable to plot the result of clustering
+#' @param plot Boolean variable to plot the research convergence
 #' @param cores Number of cores to use for parallelism
 #'
 #' @return An object with the data, the medoids id (name of the line), the clustering and the distance matrix
@@ -266,7 +267,7 @@ clarans_clust <- function(data, nb_cluster = 4, method = "LCS", maxneighbours = 
   all_medoids <- final_list[seq_along(final_list) %% 3 == 2]
   all_sum <- final_list[seq_along(final_list) %% 3 == 1]
   #création de la classe
-  bestcluster <- list(seq = data, id.med = all_medoids[[which.min(all_sum)]], clusters = apply(all_diss[[which.min(all_sum)]], 1,which.min), diss = all_diss[[which.min(all_sum)]])#création de l'objet à retourner
+  bestcluster <- list(seq = data, id.med = all_medoids[[which.min(all_sum)]], clusters = apply(all_diss[[which.min(all_sum)]], 1,which.min), diss = all_diss[[which.min(all_sum)]], evol.diss = unlist(mean_all_diss))#création de l'objet à retourner
 
   message("Table of Iteration's Distance")
   nb_char <- nchar(length(all_sum))#calcul de la longueur du numéro du dernier cluster
@@ -295,10 +296,11 @@ clarans_clust <- function(data, nb_cluster = 4, method = "LCS", maxneighbours = 
     par(mfrow = c(1,1))
     #affichage du graph de variation des distances pour un nombre condensé de sample
     plot(sapply(seq_along(all_diss), function(x){min(t[1:x])}), type = "o", main = "Evolution of the mean distance", xlab = "NumLocal number", ylab = "Mean distance value", col ="blue", pch = 19, lwd = 1)
-    seqdplot(data, apply(all_diss[[which.min(all_sum)]], 1,which.min), main = "Cluster")
+    # seqdplot(data, apply(all_diss[[which.min(all_sum)]], 1,which.min), main = "Cluster")
   }
   end.time<-proc.time() #fin du processus
   message("Calculation time : ", (end.time-start.time)[3], " sec.")
+  class(bestcluster) <- c("clarans", "partition")
   return(bestcluster)
 }
 
@@ -320,7 +322,7 @@ clarans_clust <- function(data, nb_cluster = 4, method = "LCS", maxneighbours = 
 #' @param threshold Variable to exclude outliers, whose values are greater than threshold
 #' @param max_iter Number of maximal iteration to do to find the set of medoids
 #' @param noise Small value to avoid divisions by 0 error
-#' @param plot Boolean variable to plot the result of clustering
+#' @param plot Boolean variable to plot the research convergence
 #' @param cores Number of cores to use for parallelism
 #'
 #' @return An object with the data, the medoids id (name of the line), the clustering and the distance matrix
@@ -522,7 +524,7 @@ fuzzy_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
   #affichage du minimum
   message("\n[>] Minimum Index for Sample N°", (which.min(all_q)),"\n")
   #création de la classe
-  bestcluster <- list(seq = data, id.med = med_all_diss[[which.min(all_q)]], clusters = clustering_all_diss[[which.min(all_q)]], diss = all_diss[[which.min(all_q)]], harm_value = harm_all[[which.min(all_q)]], nb_iter = iter_all[[which.min(all_q)]], membership = all_memb[[which.min(all_q)]], q = all_q)#création de l'objet à retourner
+  bestcluster <- list(seq = data, id.med = med_all_diss[[which.min(all_q)]], clusters = clustering_all_diss[[which.min(all_q)]], diss = all_diss[[which.min(all_q)]], harm_value = harm_all[[which.min(all_q)]], nb_iter = iter_all[[which.min(all_q)]], membership = all_memb[[which.min(all_q)]], q = all_q, evol.diss = unlist(mean_all_diss))#création de l'objet à retourner
 
   ##########
   #Affichage des graphs
@@ -531,10 +533,11 @@ fuzzy_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
     par(mfrow = c(1,1))
     #affichage du graph de variation des distances pour un nombre condensé de sample
     plot(sapply(seq_along(all_q), function(x){min(unlist(all_q)[1:x])}), type = "o", main = "Evolution of the objective function", xlab = "Iteration number", ylab = "Index value", col ="blue", pch = 19, lwd = 1)
-    seqdplot(data, clustering_all_diss[[which.min(all_q)]], main = "Cluster")
+    # seqdplot(data, clustering_all_diss[[which.min(all_q)]], main = "Cluster")
   }
   end.time<-proc.time() #fin du processus
   message("Calcul time : ", (end.time-start.time)[3], " sec.")
+  class(bestcluster) <- c("clara-fuzzy", "partition")
   return(bestcluster)
 }
 
@@ -549,7 +552,7 @@ fuzzy_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
 #' @param seq_obj The object generated with CLARA Clustering
 #' @param method The calculation method to compute the distance matrix. (See the function seqdist in TraMineR package)
 #' @param diss Boolean to express if the parameter diss from CLARA.seq clustering has been returned (Matrix size must be k columns and n rows - see refseq function from TraMineR package)
-#' @param plot Boolean variable to plot the result
+#' @param plot Boolean variable to plot the research convergence
 #' @param cores Number of cores to use for parallelism
 #'
 #' @return The value of the index
@@ -561,7 +564,10 @@ fuzzy_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
 #'}
 
 davies_bouldin <- function(seq_obj, method, diss = TRUE, plot = TRUE, cores = detectCores()-1){
-  message("\nDAVIES-BOULDIN INDEX\n")
+  if(!(is(seq_obj,c("clara", "partition")) || is(seq_obj,c("clarans", "partition")) || is(seq_obj,c("clara-fuzzy", "partition")))){
+    stop("Seq_obj must come from clarans_clust, clara_clust or fuzzy_clust")
+  }
+  message(paste("\nDAVIES-BOULDIN INDEX for", class(seq_obj)[1],"Clustering\n"))
   start.time <- proc.time() #debut du processus
   sum_DB <- 0
   res <- 0
@@ -625,7 +631,7 @@ davies_bouldin <- function(seq_obj, method, diss = TRUE, plot = TRUE, cores = de
   }
   message("Value of DB Index for a ", length(seq_obj$id.med), "-clusters : ", final_db)
   end.time<-proc.time() #fin du processus
-  message("Calcul time : ", (end.time-start.time)[3], " sec.")
+  message("Calculation time : ", (end.time-start.time)[3], " sec.")
   return(final_db)
 
 }
