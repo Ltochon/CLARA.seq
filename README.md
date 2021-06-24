@@ -1,6 +1,7 @@
 [![Licence: MIT](https://img.shields.io/badge/Licence-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 # CLARA.seq
 *R package for sequences clustering*
+<br>
 This package works with the *TraMineR* library which provides the *LCS* method for distance calculations.
 
 ## Installation
