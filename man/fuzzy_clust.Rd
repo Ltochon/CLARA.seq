@@ -9,7 +9,7 @@ fuzzy_clust(
   nb_sample = 100,
   size_sample = 40 + 2 * nb_cluster,
   nb_cluster = 4,
-  method = "LCS",
+  distargs = list(method = "LCS"),
   fuzzyfier = 2,
   p = 5,
   threshold = 10,
@@ -28,7 +28,7 @@ fuzzy_clust(
 
 \item{nb_cluster}{The number of medoids}
 
-\item{method}{The calculation method to compute the distance matrix. (See the function seqdist in TraMineR package)}
+\item{distargs}{List with method parameters to apply. (See the function seqdist in TraMineR package)}
 
 \item{fuzzyfier}{Value of the fuzzifier (default is 2, which is the traditionnal value)}
 
@@ -52,10 +52,14 @@ With the help of TraMineR package, FUZZY-CLARA clustering provide a clustering o
 }
 \examples{
 
-\dontrun{
+#creating sequences
 library(TraMineR)
-data(biofam)
-#Basic CLARA Computing
-my_cluster <- fuzzy_clust(seqdef(biofam),nb_sample = 14, size_sample = 50, plot = TRUE, threshold = 7, max_iter = 10, p=5)
-}
+data(mvad)
+mvad.labels <- c("employment", "further education", "higher education","joblessness", "school", "training")
+mvad.scode <- c("EM", "FE", "HE", "JL", "SC", "TR")
+mvad.seq <- seqdef(mvad, 17:86, states = mvad.scode,abels = mvad.labels, xtstep = 6)
+
+#CLARA-FUzZY Clustering
+my_cluster <- fuzzy_clust(mvad.seq,nb_sample = 14, size_sample = 50, plot = TRUE, threshold = 7, max_iter = 10, p=5)
+
 }

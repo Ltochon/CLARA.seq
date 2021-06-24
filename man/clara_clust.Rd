@@ -9,7 +9,7 @@ clara_clust(
   nb_sample = 100,
   size_sample = 40 + 2 * nb_cluster,
   nb_cluster = 4,
-  method = "LCS",
+  distargs = list(method = "LCS"),
   plot = FALSE,
   find_best_method = "Distance",
   with.diss = TRUE,
@@ -25,7 +25,7 @@ clara_clust(
 
 \item{nb_cluster}{The number of medoids}
 
-\item{method}{The calculation method to compute the distance matrix. (See the function seqdist in TraMineR package)}
+\item{distargs}{List with method parameters to apply. (See the function seqdist in TraMineR package)}
 
 \item{plot}{Boolean variable to plot the result of clustering}
 
@@ -43,13 +43,16 @@ With the help of TraMineR package, CLARA clustering provide a clustering of big 
 }
 \examples{
 
-\dontrun{
+#creating sequences
 library(TraMineR)
-data(biofam)
-#Basic CLARA Computing
-my_cluster <- clara_clust(seqdef(biofam), method="LCS")
+data(mvad)
+mvad.labels <- c("employment", "further education", "higher education","joblessness", "school", "training")
+mvad.scode <- c("EM", "FE", "HE", "JL", "SC", "TR")
+mvad.seq <- seqdef(mvad, 17:86, states = mvad.scode,abels = mvad.labels, xtstep = 6)
 
-#Improved CLARA Computing
-my_cluster <- clara_clust(seqdef(biofam), method="LCS", improve_method="Silhouette", nbessai_improved=30)
-}
+#CLARA Clustering
+my_cluster <- clara_clust(mvad.seq,nb_cluster = 4, nb_sample = 10, size_sample = 20, with.diss = TRUE)
+
+#CLARA Clustering with Davies-Bouldin Method
+my_cluster <- clara_clust(mvad.seq,nb_cluster = 4, nb_sample = 10, size_sample = 20, with.diss = TRUE, find_best_method = "DB")
 }

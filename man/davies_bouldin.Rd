@@ -6,7 +6,7 @@
 \usage{
 davies_bouldin(
   seq_obj,
-  method,
+  distargs = list(method = "LCS"),
   diss = TRUE,
   plot = TRUE,
   cores = detectCores() - 1
@@ -15,7 +15,7 @@ davies_bouldin(
 \arguments{
 \item{seq_obj}{The object generated with CLARA Clustering}
 
-\item{method}{The calculation method to compute the distance matrix. (See the function seqdist in TraMineR package)}
+\item{distargs}{List with method parameters to apply. (See the function seqdist in TraMineR package)}
 
 \item{diss}{Boolean to express if the parameter diss from CLARA.seq clustering has been returned (Matrix size must be k columns and n rows - see refseq function from TraMineR package)}
 
@@ -31,6 +31,6 @@ Implementation of Davies-Bouldin index to evaluate the quality of CLARA Clusteri
 }
 \examples{
 \dontrun{
-my_index <- db_index(my_cluster, "LCS", diss = FALSE)
+my_index <- davies_bouldin(my_cluster)
 }
 }

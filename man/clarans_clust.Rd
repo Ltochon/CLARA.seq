@@ -6,10 +6,10 @@
 \usage{
 clarans_clust(
   data,
-  nb_cluster = 4,
-  method = "LCS",
-  maxneighbours = 100,
-  numlocal = 4,
+  nb_cluster,
+  distargs = list(method = "LCS"),
+  maxneighbours,
+  numlocal,
   plot = FALSE,
   cores = detectCores() - 1
 )
@@ -19,7 +19,7 @@ clarans_clust(
 
 \item{nb_cluster}{The number of medoids}
 
-\item{method}{The calculation method to compute the distance matrix. (See the function seqdist in TraMineR package)}
+\item{distargs}{List with method parameters to apply. (See the function seqdist in TraMineR package)}
 
 \item{maxneighbours}{Number of neighbours to explore to find a better clustering}
 
@@ -37,10 +37,13 @@ With the help of TraMineR package, CLARANS clustering provide a clustering of bi
 }
 \examples{
 
-\dontrun{
+#creating sequences
 library(TraMineR)
-data(biofam)
-#Basic CLARA Computing
-my_cluster <- clarans_clust(seqdef(biofam), method="LCS", cores = 15)
-}
+data(mvad)
+mvad.labels <- c("employment", "further education", "higher education","joblessness", "school", "training")
+mvad.scode <- c("EM", "FE", "HE", "JL", "SC", "TR")
+mvad.seq <- seqdef(mvad, 17:86, states = mvad.scode,abels = mvad.labels, xtstep = 6)
+
+#CLARANS Clustering
+my_cluster <- clarans_clust(mvad.seq,nb_cluster = 4, maxneighbours = 20, numlocal = 4, plot = TRUE)
 }

@@ -23,15 +23,18 @@
 #'
 #' @examples
 #'
-#'\dontrun{
+#' #creating sequences
 #' library(TraMineR)
-#' data(biofam)
-#' #Basic CLARA Computing
-#' my_cluster <- clara_clust(seqdef(biofam), method="LCS")
+#' data(mvad)
+#' mvad.labels <- c("employment", "further education", "higher education","joblessness", "school", "training")
+#' mvad.scode <- c("EM", "FE", "HE", "JL", "SC", "TR")
+#' mvad.seq <- seqdef(mvad, 17:86, states = mvad.scode,abels = mvad.labels, xtstep = 6)
 #'
-#' #Improved CLARA Computing
-#' my_cluster <- clara_clust(seqdef(biofam), method="LCS", improve_method="Silhouette", nbessai_improved=30)
-#' }
+#' #CLARA Clustering
+#' my_cluster <- clara_clust(mvad.seq,nb_cluster = 4, nb_sample = 10, size_sample = 20, with.diss = TRUE)
+#'
+#' #CLARA Clustering with Davies-Bouldin Method
+#' my_cluster <- clara_clust(mvad.seq,nb_cluster = 4, nb_sample = 10, size_sample = 20, with.diss = TRUE, find_best_method = "DB")
 
 
 clara_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, nb_cluster = 4, distargs = list(method = "LCS"), plot = FALSE, find_best_method = "Distance", with.diss = TRUE, cores = detectCores()-1){
@@ -209,12 +212,15 @@ clara_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
 #'
 #' @examples
 #'
-#'\dontrun{
+#' #creating sequences
 #' library(TraMineR)
-#' data(biofam)
-#' #Basic CLARA Computing
-#' my_cluster <- clarans_clust(seqdef(biofam), method="LCS", cores = 15)
-#' }
+#' data(mvad)
+#' mvad.labels <- c("employment", "further education", "higher education","joblessness", "school", "training")
+#' mvad.scode <- c("EM", "FE", "HE", "JL", "SC", "TR")
+#' mvad.seq <- seqdef(mvad, 17:86, states = mvad.scode,abels = mvad.labels, xtstep = 6)
+#'
+#' #CLARANS Clustering
+#' my_cluster <- clarans_clust(mvad.seq,nb_cluster = 4, maxneighbours = 20, numlocal = 4, plot = TRUE)
 
 clarans_clust <- function(data, nb_cluster, distargs = list(method = "LCS"), maxneighbours, numlocal, plot = FALSE, cores = detectCores()-1){
   message("\nCLARANS ALGORITHM\n")
@@ -337,12 +343,16 @@ clarans_clust <- function(data, nb_cluster, distargs = list(method = "LCS"), max
 #'
 #' @examples
 #'
-#'\dontrun{
+#' #creating sequences
 #' library(TraMineR)
-#' data(biofam)
-#' #Basic CLARA Computing
-#' my_cluster <- fuzzy_clust(seqdef(biofam),nb_sample = 14, size_sample = 50, plot = TRUE, threshold = 7, max_iter = 10, p=5)
-#' }
+#' data(mvad)
+#' mvad.labels <- c("employment", "further education", "higher education","joblessness", "school", "training")
+#' mvad.scode <- c("EM", "FE", "HE", "JL", "SC", "TR")
+#' mvad.seq <- seqdef(mvad, 17:86, states = mvad.scode,abels = mvad.labels, xtstep = 6)
+#'
+#' #CLARA-FUzZY Clustering
+#' my_cluster <- fuzzy_clust(mvad.seq,nb_sample = 14, size_sample = 50, plot = TRUE, threshold = 7, max_iter = 10, p=5)
+#'
 fuzzy_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, nb_cluster = 4, distargs = list(method = "LCS"), fuzzyfier = 2, p = 5, threshold = 10, max_iter = 10, noise = 0.5, plot = FALSE, cores = detectCores()-1){
   if(nb_cluster > size_sample){
     stop("Too many cluster requested")
@@ -572,7 +582,7 @@ fuzzy_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
 #'
 #' @examples
 #'\dontrun{
-#' my_index <- db_index(my_cluster, "LCS", diss = FALSE)
+#' my_index <- davies_bouldin(my_cluster)
 #'}
 
 davies_bouldin <- function(seq_obj, distargs = list(method = "LCS"), diss = TRUE, plot = TRUE, cores = detectCores()-1){
