@@ -130,11 +130,11 @@ clara_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
     stopCluster(cl)
     names(calc_diss) <- 1:length(calc_diss)
     diss <- do.call(cbind,calc_diss)
-    bestcluster <- list(seq = data, id.med = med_all_diss[[which.min(mean_all_diss)]], clusters = clustering_all_diss[[which.min(mean_all_diss)]], diss = diss, evol.diss = sapply(seq_along(mean_all_diss),function(x){min(unlist(mean_all_diss)[1:x])}), plot = function(){plot(bestcluster$evol.diss[index],type = "o", main = paste("Evolution of sample's value with", find_best_method,"method"), xlab = "Iteration Number", ylab = paste(find_best_method ,"value"), col ="blue", pch = 19, lwd = 1, xaxt = "n") + axis(1, at = 1:length(index), labels = index)})#création de l'objet à retourner
+    bestcluster <- list(seq = data, id.med = med_all_diss[[which.min(mean_all_diss)]], clusters = clustering_all_diss[[which.min(mean_all_diss)]], diss = diss, evol.diss = sapply(seq_along(mean_all_diss),function(x){min(unlist(mean_all_diss)[1:x])}), plot = inivisble(function(){plot(bestcluster$evol.diss[index],type = "o", main = paste("Evolution of sample's value with", find_best_method,"method"), xlab = "Iteration Number", ylab = paste(find_best_method ,"value"), col ="blue", pch = 19, lwd = 1, xaxt = "n") + axis(1, at = 1:length(index), labels = index)}))#création de l'objet à retourner
 
   }
   else{
-    bestcluster <- list(seq = data, id.med = med_all_diss[[which.min(mean_all_diss)]], clusters = clustering_all_diss[[which.min(mean_all_diss)]], evol.diss = sapply(seq_along(mean_all_diss),function(x){min(unlist(mean_all_diss)[1:x])}), plot = function(){plot(bestcluster$evol.diss[index],type = "o", main = paste("Evolution of sample's value with", find_best_method,"method"), xlab = "Iteration Number", ylab = paste(find_best_method ,"value"), col ="blue", pch = 19, lwd = 1, xaxt = "n") + axis(1, at = 1:length(index), labels = index)})#création de l'objet à retourner
+    bestcluster <- list(seq = data, id.med = med_all_diss[[which.min(mean_all_diss)]], clusters = clustering_all_diss[[which.min(mean_all_diss)]], evol.diss = sapply(seq_along(mean_all_diss),function(x){min(unlist(mean_all_diss)[1:x])}), plot = invisible(function(){plot(bestcluster$evol.diss[index],type = "o", main = paste("Evolution of sample's value with", find_best_method,"method"), xlab = "Iteration Number", ylab = paste(find_best_method ,"value"), col ="blue", pch = 19, lwd = 1, xaxt = "n") + axis(1, at = 1:length(index), labels = index)}))#création de l'objet à retourner
   }
   ####diss
   message(paste("\nTable of Sample's Values with", find_best_method, "Method"))
