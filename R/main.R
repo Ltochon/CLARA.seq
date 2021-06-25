@@ -130,11 +130,11 @@ clara_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
     stopCluster(cl)
     names(calc_diss) <- 1:length(calc_diss)
     diss <- do.call(cbind,calc_diss)
-    bestcluster <- list(seq = data, id.med = med_all_diss[[which.min(mean_all_diss)]], clusters = clustering_all_diss[[which.min(mean_all_diss)]], diss = diss, evol.diss = sapply(seq_along(mean_all_diss),function(x){min(unlist(mean_all_diss)[1:x])}), plot = function(){invisible(plot(bestcluster$evol.diss[index],type = "o", main = paste("Evolution of sample's value with", find_best_method,"method"), xlab = "Iteration Number", ylab = paste(find_best_method ,"value"), col ="blue", pch = 19, lwd = 1, xaxt = "n") + axis(1, at = 1:length(index), labels = index))})#création de l'objet à retourner
+    bestcluster <- list(seq = data, id.med = med_all_diss[[which.min(mean_all_diss)]], clusters = clustering_all_diss[[which.min(mean_all_diss)]], diss = diss, evol.diss = sapply(seq_along(mean_all_diss),function(x){min(unlist(mean_all_diss)[1:x])}), find_best_method = find_best_method)#création de l'objet à retourner
 
   }
   else{
-    bestcluster <- list(seq = data, id.med = med_all_diss[[which.min(mean_all_diss)]], clusters = clustering_all_diss[[which.min(mean_all_diss)]], evol.diss = sapply(seq_along(mean_all_diss),function(x){min(unlist(mean_all_diss)[1:x])}), plot = function(){invisible(plot(bestcluster$evol.diss[index],type = "o", main = paste("Evolution of sample's value with", find_best_method,"method"), xlab = "Iteration Number", ylab = paste(find_best_method ,"value"), col ="blue", pch = 19, lwd = 1, xaxt = "n") + axis(1, at = 1:length(index), labels = index))})#création de l'objet à retourner
+    bestcluster <- list(seq = data, id.med = med_all_diss[[which.min(mean_all_diss)]], clusters = clustering_all_diss[[which.min(mean_all_diss)]], evol.diss = sapply(seq_along(mean_all_diss),function(x){min(unlist(mean_all_diss)[1:x])}), find_best_method = find_best_method)#création de l'objet à retourner
   }
   ####diss
   message(paste("\nTable of Sample's Values with", find_best_method, "Method"))
@@ -181,21 +181,17 @@ clara_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
   message(txt)
   #affichage du minimum
   message("\n[>] Minimum Index Value for Sample N°", (which.min(mean_all_diss)),"\n")
-
+  class(bestcluster) <- "clara_seq"
   ##########
   #Affichage des graphs
   ##########
   if(plot){
     par(mfrow = c(1,1))
-    m <- sapply(seq_along(mean_all_diss),function(x){min(unlist(mean_all_diss)[1:x])})
-    # index <- c(1,unlist(lapply(1:9,function(x){x*floor(nb_sample/9)})))
-    plot(m[index],type = "o", main = paste("Evolution of sample's value with", find_best_method,"method"), xlab = "Iteration Number", ylab = paste(find_best_method ,"value"), col ="blue", pch = 19, lwd = 1, xaxt = "n")
-    axis(1, at = 1:length(index), labels = index)
+    plot(bestcluster)
     # seqdplot(data, group = clustering_all_diss[[which.min(mean_all_diss)]], main = "Cluster")
   }
   end.time<-proc.time() #fin du processus
   message("Calculation time : ", (end.time-start.time)[3], " sec.")
-  class(bestcluster) <- "clara_seq"
   return(bestcluster)
 }
 
@@ -288,8 +284,11 @@ clarans_clust <- function(data, nb_cluster, distargs = list(method = "LCS"), max
   all_diss <- final_list[seq_along(final_list) %% 3 == 0]
   all_medoids <- final_list[seq_along(final_list) %% 3 == 2]
   all_sum <- final_list[seq_along(final_list) %% 3 == 1]
+
+  mean_all_diss <- sapply(seq_along(all_diss), function(x){mean(apply(all_diss[[x]], 1, min))})
+  mean_all_diss <- sapply(1:length(mean_all_diss),function(x){min(mean_all_diss[1:x])})
   #création de la classe
-  bestcluster <- list(seq = data, id.med = all_medoids[[which.min(all_sum)]], clusters = apply(all_diss[[which.min(all_sum)]], 1,which.min), diss = all_diss[[which.min(all_sum)]])#création de l'objet à retourner
+  bestcluster <- list(seq = data, id.med = all_medoids[[which.min(all_sum)]], clusters = apply(all_diss[[which.min(all_sum)]], 1,which.min), diss = all_diss[[which.min(all_sum)]], evol.diss = mean_all_diss)#création de l'objet à retourner
 
   message("Table of Iteration's Distance")
   nb_char <- nchar(length(all_sum))#calcul de la longueur du numéro du dernier cluster
@@ -310,19 +309,18 @@ clarans_clust <- function(data, nb_cluster, distargs = list(method = "LCS"), max
   message(txt)
   #affichage du minimum
   message("\n[>] Minimum Distance for iteration N°", (which.min(all_sum)),"\n")
-
+  class(bestcluster) <- "clarans_seq"
   ##########
   #Affichage des graphs
   ##########
   if(plot){
     par(mfrow = c(1,1))
     #affichage du graph de variation des distances pour un nombre condensé de sample
-    plot(sapply(seq_along(all_diss), function(x){min(t[1:x])}), type = "o", main = "Evolution of the mean distance", xlab = "NumLocal number", ylab = "Mean distance value", col ="blue", pch = 19, lwd = 1)
-    # seqdplot(data, apply(all_diss[[which.min(all_sum)]], 1,which.min), main = "Cluster")
+    plot(bestcluster)
   }
   end.time<-proc.time() #fin du processus
   message("Calculation time : ", (end.time-start.time)[3], " sec.")
-  class(bestcluster) <- "clarans_seq"
+
   return(bestcluster)
 }
 
@@ -555,20 +553,18 @@ fuzzy_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
   #affichage du minimum
   message("\n[>] Minimum Index for Sample N°", (which.min(all_q)),"\n")
   #création de la classe
-  bestcluster <- list(seq = data, id.med = med_all_diss[[which.min(all_q)]], clusters = clustering_all_diss[[which.min(all_q)]], diss = all_diss[[which.min(all_q)]], harm_value = harm_all[[which.min(all_q)]], nb_iter = iter_all[[which.min(all_q)]], membership = all_memb[[which.min(all_q)]], q = all_q)#création de l'objet à retourner
-
+  bestcluster <- list(seq = data, id.med = med_all_diss[[which.min(all_q)]], clusters = clustering_all_diss[[which.min(all_q)]], diss = all_diss[[which.min(all_q)]], harm_value = harm_all[[which.min(all_q)]], nb_iter = iter_all[[which.min(all_q)]], membership = all_memb[[which.min(all_q)]], q = all_q, evol.diss = sapply(seq_along(all_q), function(x){min(unlist(all_q)[1:x])}))#création de l'objet à retourner
+  class(bestcluster) <- "clarafuzzy_seq"
   ##########
   #Affichage des graphs
   ##########
   if(plot){
     par(mfrow = c(1,1))
     #affichage du graph de variation des distances pour un nombre condensé de sample
-    plot(sapply(seq_along(all_q), function(x){min(unlist(all_q)[1:x])}), type = "o", main = "Evolution of the objective function", xlab = "Iteration number", ylab = "Index value", col ="blue", pch = 19, lwd = 1)
-    # seqdplot(data, clustering_all_diss[[which.min(all_q)]], main = "Cluster")
+    plot(bestcluster)
   }
   end.time<-proc.time() #fin du processus
   message("Calcul time : ", (end.time-start.time)[3], " sec.")
-  class(bestcluster) <- "clara-fuzzy_seq"
   return(bestcluster)
 }
 
@@ -590,9 +586,7 @@ fuzzy_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
 #' @export
 #'
 #' @examples
-#'\dontrun{
 #' my_index <- davies_bouldin(my_cluster)
-#'}
 
 davies_bouldin <- function(seq_obj, distargs = list(method = "LCS"), diss = TRUE, plot = TRUE, cores = detectCores()-1){
   message(paste("\nDAVIES-BOULDIN INDEX for", class(seq_obj)[1],"Clustering\n"))
@@ -668,5 +662,72 @@ davies_bouldin <- function(seq_obj, distargs = list(method = "LCS"), diss = TRUE
   message("Calcul time : ", (end.time-start.time)[3], " sec.")
   return(final_db)
 
+}
+
+
+#' CLARA Plot Method
+#' @description Create graph from CLARA object to show the evolution of the mean distance
+#'
+#' @param obj An object from the class clara_seq (create by the function clara_clust())
+#'
+#' @return A plot of the mean distance's evolution
+#' @export
+#'
+#' @examples
+#' plot(my_cluster)
+
+plot.clara_seq <- function(obj){
+  if(length(obj$evol.diss) > 9){
+    index <- unlist(lapply(1:10,function(x){floor(x * (length(obj$evol.diss)/10))}))
+  }
+  else{
+    index <- 1:length(obj$evol.diss)
+  }
+  plot(obj$evol.diss[index],type = "o", main = paste("Evolution of sample's value with", obj$find_best_method,"method"), xlab = "Iteration Number", ylab = paste(obj$find_best_method ,"value"), col ="blue", pch = 19, lwd = 1, xaxt = "n")
+  axis(1, at = 1:length(index), labels = index)
+}
+
+#' CLARANS Plot Method
+#' @description Create graph from CLARANS object to show the evolution of the mean distance
+#'
+#' @param obj An object from the class clarans_seq (create by the function clarans_clust())
+#'
+#' @return A plot of the mean distance's evolution
+#' @export
+#'
+#' @examples
+#' plot(my_cluster)
+
+plot.clarans_seq <- function(obj){
+  if(length(obj$evol.diss) > 9){
+    index <- unlist(lapply(1:10,function(x){floor(x * (length(obj$evol.diss)/10))}))
+  }
+  else{
+    index <- 1:length(obj$evol.diss)
+  }
+  plot(obj$evol.diss[index],type = "o", main = "Evolution of the mean distance", xlab = "NumLocal number", ylab = "Mean distance value", col ="blue", pch = 19, lwd = 1, xaxt = "n")
+  axis(1, at = 1:length(index), labels = index)
+}
+
+#' CLARA-FUZZY Plot Method
+#' @description Create graph from CLARA-FUZZY object to show the evolution of the index value
+#'
+#' @param obj An object from the class clarafuzzy_seq (create by the function fuzzy_clust())
+#'
+#' @return A plot of the index evolution
+#' @export
+#'
+#' @examples
+#' plot(my_cluster)
+
+plot.clarafuzzy_seq <- function(obj){
+  if(length(obj$evol.diss) > 9){
+    index <- unlist(lapply(1:10,function(x){floor(x * (length(obj$evol.diss)/10))}))
+  }
+  else{
+    index <- 1:length(obj$evol.diss)
+  }
+  plot(obj$evol.diss[index],type = "o", main = "Evolution of the objective function", xlab = "Iteration number", ylab = "Index value", col ="blue", pch = 19, lwd = 1, xaxt = "n")
+  axis(1, at = 1:length(index), labels = index)
 }
 

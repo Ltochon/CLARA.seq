@@ -30,7 +30,5 @@ The value of the index
 Implementation of Davies-Bouldin index to evaluate the quality of CLARA Clustering.
 }
 \examples{
-\dontrun{
 my_index <- davies_bouldin(my_cluster)
-}
 }
