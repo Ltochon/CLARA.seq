@@ -195,7 +195,7 @@ clara_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
   }
   end.time<-proc.time() #fin du processus
   message("Calculation time : ", (end.time-start.time)[3], " sec.")
-  class(bestcluster) <- c("clara", "partition")
+  class(bestcluster) <- "clara_seq"
   return(bestcluster)
 }
 
@@ -322,7 +322,7 @@ clarans_clust <- function(data, nb_cluster, distargs = list(method = "LCS"), max
   }
   end.time<-proc.time() #fin du processus
   message("Calculation time : ", (end.time-start.time)[3], " sec.")
-  class(bestcluster) <- c("clarans", "partition")
+  class(bestcluster) <- "clarans_seq"
   return(bestcluster)
 }
 
@@ -568,7 +568,7 @@ fuzzy_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
   }
   end.time<-proc.time() #fin du processus
   message("Calcul time : ", (end.time-start.time)[3], " sec.")
-  class(bestcluster) <- c("clara-fuzzy", "partition")
+  class(bestcluster) <- "clara-fuzzy_seq"
   return(bestcluster)
 }
 
