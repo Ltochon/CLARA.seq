@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Louis Tochon and Matthias Studer" />
+
+<meta name="date" content="2021-06-11" />
+
+<title>User Guide</title>
+
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">User Guide</h1>
+<h4 class="author">Louis Tochon and Matthias Studer</h4>
+<h4 class="date">06/11/2021</h4>
+
+
+
+<div style="page-break-after: always;"></div>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>CLARA.seq is a R-package to cluster big datasets of sequences. It uses the TraMineR (<a href="http://cran.r-project.org/web/packages/TraMineR/" class="uri">http://cran.r-project.org/web/packages/TraMineR/</a>) package to calculate distances between each sequence but this package is made for 32-bits computers, which implies that the quantity of objects is limited to 46’300 objects (because we need to compute a matrix of size <em>n</em> * <em>n</em>). CLARA.seq provides three different functions : CLARA, CLARANS and ROBUST FUZZY C-MEDOIDS.<br />
+The package has an index called Davies-Bouldin index to check the validity of the clustering found after the use of a clustering method.</p>
+</div>
+<div id="installation" class="section level1">
+<h1>Installation</h1>
+<p>This package is still in a test phase. Therefore it is only available on GitHub. The link to the repository is : <a href="https://github.com/Ltochon/CLARA.seq" class="uri">https://github.com/Ltochon/CLARA.seq</a></p>
+<p>To download the package and get the functions in your personnal environnement, here are the commands :</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">install.packages</span>(<span class="st">&quot;devtools&quot;</span>)</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">library</span>(devtools)</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="kw">install_github</span>(<span class="st">&quot;Ltochon/CLARA.seq&quot;</span>)</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="kw">library</span>(CLARA.seq)</span></code></pre></div>
+</div>
+<div id="use-cases" class="section level1">
+<h1>Use cases</h1>
+<div id="creation-of-sequences" class="section level2">
+<h2>Creation of sequences</h2>
+<p>To begin the creation of sequences to cluster is needed. The use of the TraMineR package allows to get example datas :</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co">#creating sequences</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="kw">library</span>(TraMineR)</span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="kw">data</span>(mvad)</span>
+<span id="cb2-4"><a href="#cb2-4"></a>mvad.labels &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;employment&quot;</span>, <span class="st">&quot;further education&quot;</span>, <span class="st">&quot;higher education&quot;</span>,<span class="st">&quot;joblessness&quot;</span>, <span class="st">&quot;school&quot;</span>, <span class="st">&quot;training&quot;</span>)</span>
+<span id="cb2-5"><a href="#cb2-5"></a>mvad.scode &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;EM&quot;</span>, <span class="st">&quot;FE&quot;</span>, <span class="st">&quot;HE&quot;</span>, <span class="st">&quot;JL&quot;</span>, <span class="st">&quot;SC&quot;</span>, <span class="st">&quot;TR&quot;</span>)</span>
+<span id="cb2-6"><a href="#cb2-6"></a>mvad.seq &lt;-<span class="st"> </span><span class="kw">seqdef</span>(mvad, <span class="dv">17</span><span class="op">:</span><span class="dv">86</span>, <span class="dt">states =</span> mvad.scode,<span class="dt">abels =</span> mvad.labels, <span class="dt">xtstep =</span> <span class="dv">6</span>)</span></code></pre></div>
+</div>
+<div id="clara" class="section level2">
+<h2>CLARA</h2>
+<p>CLARA has been implemented with a parameter which can determine which aspect of the clustering is the most important. Indeed the parameter <em>find_best_method</em> allows users to choose between :</p>
+<ul>
+<li><strong>Distance</strong> : finding the best clustering with the mean distance method which aims to minimize the distance between each object and his medoid</li>
+<li><strong>DB</strong> : finding the best clustering with the Davies-Bouldin index method which aims to minimize the index of the global clustering</li>
+</ul>
+<div id="research-of-the-best-clutering-with-the-mean-distance-method" class="section level3">
+<h3>Research of the best clutering with the mean distance method</h3>
+<p>With the sequences previously created, the clustering can be applied on them. The process will be parallelized to find the best clustering faster. The number of cores used is initially set to use all possible cores minus one to avoid any overloads.</p>
+<p>The most important parameters are the number of clusters (nb_cluster), the number of subsets to use (nb_sample) and the size of each one of thes subsets (size_sample).</p>
+<p><strong>Warnings</strong> the calculation time will increase exponentially according to the size of each subset as shown on this figure : <img src="data:image/png;base64,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" width="39%" style="display: block; margin: auto;" /> The calculation time has been analyzed on the supercomputer of the University of Geneva <em>Baobab</em> using an Intel® Xeon® E5-2660 processor.</p>
+<p>The function calls is as follow for CLARA with the mean distance :</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>my_cluster &lt;-<span class="st"> </span><span class="kw">clara_clust</span>(mvad.seq,<span class="dt">nb_cluster =</span> <span class="dv">4</span>, <span class="dt">nb_sample =</span> <span class="dv">20</span>, </span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="op">+</span><span class="st">   </span><span class="dt">size_sample =</span> <span class="dv">20</span>, <span class="dt">with.diss =</span> <span class="ot">TRUE</span>)</span></code></pre></div>
+<p>A console output will be written with a summary of each iterations mean distance value :</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>CLARA ALGORITHM Improved</span>
+<span id="cb4-2"><a href="#cb4-2"></a></span>
+<span id="cb4-3"><a href="#cb4-3"></a></span>
+<span id="cb4-4"><a href="#cb4-4"></a>Table of Sample Values with Distance Method</span>
+<span id="cb4-5"><a href="#cb4-5"></a></span>
+<span id="cb4-6"><a href="#cb4-6"></a>N°<span class="dv">1</span>  (Med<span class="op">:</span><span class="st"> </span><span class="dv">609</span>, <span class="dv">186</span>, <span class="dv">167</span>, <span class="dv">309</span>) <span class="op">:</span><span class="st"> </span><span class="fl">37.32022471911</span>  <span class="op">|</span><span class="st">  </span>N°<span class="dv">2</span>  (Med<span class="op">:</span><span class="st"> </span><span class="dv">684</span>, <span class="dv">143</span>, <span class="dv">40</span>, <span class="dv">200</span>)  <span class="op">:</span><span class="st"> </span><span class="fl">40.20224719101</span>  </span>
+<span id="cb4-7"><a href="#cb4-7"></a>N°<span class="dv">3</span>  (Med<span class="op">:</span><span class="st"> </span><span class="dv">639</span>, <span class="dv">54</span>, <span class="dv">479</span>, <span class="dv">63</span>)   <span class="op">:</span><span class="st"> </span><span class="fl">36.82303378652</span>  <span class="op">|</span><span class="st">  </span>N°<span class="dv">4</span>  (Med<span class="op">:</span><span class="st"> </span><span class="dv">259</span>, <span class="dv">212</span>, <span class="dv">288</span>, <span class="dv">177</span>) <span class="op">:</span><span class="st"> </span><span class="fl">36.71629213415</span>  </span>
+<span id="cb4-8"><a href="#cb4-8"></a>N°<span class="dv">5</span>  (Med<span class="op">:</span><span class="st"> </span><span class="dv">599</span>, <span class="dv">691</span>, <span class="dv">262</span>, <span class="dv">27</span>)  <span class="op">:</span><span class="st"> </span><span class="fl">35.77528088764</span>  <span class="op">|</span><span class="st">  </span>N°<span class="dv">6</span>  (Med<span class="op">:</span><span class="st"> </span><span class="dv">208</span>, <span class="dv">509</span>, <span class="dv">251</span>, <span class="dv">219</span>) <span class="op">:</span><span class="st"> </span><span class="fl">41.72471911236</span>  </span>
+<span id="cb4-9"><a href="#cb4-9"></a>N°<span class="dv">7</span>  (Med<span class="op">:</span><span class="st"> </span><span class="dv">134</span>, <span class="dv">686</span>, <span class="dv">21</span>, <span class="dv">465</span>)  <span class="op">:</span><span class="st"> </span><span class="fl">40.33988404494</span>  <span class="op">|</span><span class="st">  </span>N°<span class="dv">8</span>  (Med<span class="op">:</span><span class="st"> </span><span class="dv">323</span>, <span class="dv">350</span>, <span class="dv">2</span>, <span class="dv">125</span>)   <span class="op">:</span><span class="st"> </span><span class="fl">40.08707516854</span>  </span>
+<span id="cb4-10"><a href="#cb4-10"></a>N°<span class="dv">9</span>  (Med<span class="op">:</span><span class="st"> </span><span class="dv">48</span>, <span class="dv">640</span>, <span class="dv">131</span>, <span class="dv">56</span>)   <span class="op">:</span><span class="st"> </span><span class="fl">42.2528988764</span>   <span class="op">|</span><span class="st">  </span>N°<span class="dv">10</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">525</span>, <span class="dv">473</span>, <span class="dv">125</span>, <span class="dv">390</span>) <span class="op">:</span><span class="st"> </span><span class="fl">39.15443820225</span>  </span>
+<span id="cb4-11"><a href="#cb4-11"></a>N°<span class="dv">11</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">314</span>, <span class="dv">464</span>, <span class="dv">50</span>, <span class="dv">366</span>)  <span class="op">:</span><span class="st"> </span><span class="fl">38.69213483146</span>  <span class="op">|</span><span class="st">  </span>N°<span class="dv">12</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">269</span>, <span class="dv">628</span>, <span class="dv">273</span>, <span class="dv">200</span>) <span class="op">:</span><span class="st"> </span><span class="fl">39.68314606742</span>  </span>
+<span id="cb4-12"><a href="#cb4-12"></a>N°<span class="dv">13</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">592</span>, <span class="dv">435</span>, <span class="dv">560</span>, <span class="dv">470</span>) <span class="op">:</span><span class="st"> </span><span class="fl">37.19629213483</span>  <span class="op">|</span><span class="st">  </span>N°<span class="dv">14</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">280</span>, <span class="dv">506</span>, <span class="dv">355</span>, <span class="dv">246</span>) <span class="op">:</span><span class="st"> </span><span class="fl">39.38483106742</span>  </span>
+<span id="cb4-13"><a href="#cb4-13"></a>N°<span class="dv">15</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">299</span>, <span class="dv">125</span>, <span class="dv">604</span>, <span class="dv">618</span>) <span class="op">:</span><span class="st"> </span><span class="fl">37.1404494382</span>   <span class="op">|</span><span class="st">  </span>N°<span class="dv">16</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">579</span>, <span class="dv">186</span>, <span class="dv">320</span>, <span class="dv">514</span>) <span class="op">:</span><span class="st"> </span><span class="fl">47.43252696629</span>  </span>
+<span id="cb4-14"><a href="#cb4-14"></a>N°<span class="dv">17</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">282</span>, <span class="dv">321</span>, <span class="dv">354</span>, <span class="dv">679</span>) <span class="op">:</span><span class="st"> </span><span class="fl">39.23370786517</span>  <span class="op">|</span><span class="st">  </span>N°<span class="dv">18</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">88</span>, <span class="dv">247</span>, <span class="dv">166</span>, <span class="dv">376</span>)  <span class="op">:</span><span class="st"> </span><span class="fl">40.45561797753</span>  </span>
+<span id="cb4-15"><a href="#cb4-15"></a>N°<span class="dv">19</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">126</span>, <span class="dv">376</span>, <span class="dv">307</span>, <span class="dv">19</span>)  <span class="op">:</span><span class="st"> </span><span class="fl">44.57078651685</span>  <span class="op">|</span><span class="st">  </span>N°<span class="dv">20</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">252</span>, <span class="dv">582</span>, <span class="dv">25</span>, <span class="dv">549</span>)  <span class="op">:</span><span class="st"> </span><span class="fl">38.02247191011</span>  </span>
+<span id="cb4-16"><a href="#cb4-16"></a></span>
+<span id="cb4-17"><a href="#cb4-17"></a>[<span class="op">&gt;</span>] Minimum Index Value <span class="cf">for</span> Sample N°<span class="dv">5</span></span>
+<span id="cb4-18"><a href="#cb4-18"></a></span>
+<span id="cb4-19"><a href="#cb4-19"></a>Calculation time <span class="op">:</span><span class="st"> </span><span class="fl">14.4400000000001</span> sec.</span></code></pre></div>
+<p>The function will create an object of class <em>clara_seq</em> with the following values :</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a> <span class="op">$</span><span class="st"> </span>seq <span class="co">#the original sequences dataset</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a> <span class="op">$</span><span class="st"> </span>id.med <span class="co">#the identifier of the medoids</span></span>
+<span id="cb5-3"><a href="#cb5-3"></a> <span class="op">$</span><span class="st"> </span>clusters <span class="co">#the resulting clustering</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a> <span class="op">$</span><span class="st"> </span>diss <span class="co">#the matrix of distance of size k*n</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a> <span class="op">$</span><span class="st"> </span>evol.diss <span class="co">#the value of the best value found for each iteration </span></span>
+<span id="cb5-6"><a href="#cb5-6"></a> <span class="op">$</span><span class="st"> </span>find_best_method <span class="co">#method used to find the best clustering</span></span></code></pre></div>
+<p>The plot parameter determines if the mean distance value’s evolution must be shown at the end.</p>
+<p>The graph is the representation of the value evolution for each iteration (depending of the method used) : <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAlAAAAIaCAMAAADY/4N9AAAAz1BMVEUAAAAAADoAAGYAAP8AOjoAOmYAOpAAZmYAZpAAZrY6AAA6ADo6AGY6OgA6OmY6OpA6ZmY6ZpA6ZrY6kLY6kNtmAABmADpmOgBmOjpmkJBmkLZmkNtmtrZmtttmtv+QOgCQZgCQZjqQkDqQkGaQkLaQtpCQttuQtv+Q27aQ29uQ2/+2ZgC2Zjq2ZpC2kDq2kGa225C227a229u22/+2/7a2/9u2///bkDrbkGbbtmbbtpDb27bb2//b/7bb////tmb/25D/27b//7b//9v///932nIfAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAYzElEQVR4nO2dC3vktnVAqZVXqZRsErsju2myUtK0bqtxH7HrncRuNVqJ//83lQD4AF8zJHgvCXLO+b7Vp9WQeJBnQBAkcJMUQJBk6QLAtkAoEAWhQBSEAlEQCkRBKBAFoUAUhAJREApEQSgQBaFAFIQCURAKREEoEAWhQBSEAlEQCkRBKBAFoUAUhAJREApEQSgQBaFAFIQCURAKREEoEAWhQBSEAlEQCkRBKBAFoUAUhAJRtIQ6JAU3zz2bvD22Pnv7j09dfz7F23d3SfJVYCmbeWX/vw3cdeD2pobZwbl6qn2YH62rL3/oTNnuJEx3Qersk3ejM45KqM/fvBst1NHksQss5exC2Rr2CpUp9dCRsttJlp6C1Fm9UCEVOHNMTjOjUA5Xw36hOisTclgCCzI9Yz2hqrLk5crakuz7l/70D0nyxT8+F6fEffh6n7Uye3NE3/2Yn6lyO1Ptf/8uSd57dS8/3Ptn4a8fistG+tM32d9//WRTvv3pQ3L1Mf3rnUsiy/Ev2e7vf6iuQ1nqV18928929XSaxS/TbZXeT8btduPK92D3/Wi2dzX81KpQfrR+zhK/LQpVFiLfqcq6cUD+lm34xce0VYB2zasNOgtSHXHbkXj/baxC5Sa5I3wo263TQlXbld/fK+8EFB/6QuV/Nekdyz2ylB0fis/2VXKuCPkm7+1XdldLp1n8Y2NXXygvGbdbnvvOOvljTah6DuXRyja/eXYpV4XId6qyrh+QvDrtArRrXm3QVRDviGdFaJRwMPqXvIf8QuKO+stdfrR2HafE/u7+7G1nfmbNyaHqKtU/LDwz38jn9G950n9n09jlpzT7a/Ix3yM7mO9+MH+5rYrwg9u4mY7FK76Xbmfp/WSy3x7MD5fNrb99Vo6bWoXKr5/5xW7pF6I4LEXWtQOSefb3z5/vnXnNerRqXm7QLoh/ULNEb59NcxanUO54uTOft6L74sD1CeVtZ9J6sBUu+jf1Dwuhsg3ef1+V4Of/+mBOpv3S5z+LY5m3ONW526XeSW2kUyt+lW6r9M1krIcH+y03bjWEeigvlGlaE+rqyW7pF6K88uRZ1w5InuKX37cK0Kq5v0G7IP5BLasVqVDVAS26suWB6xHK3y4/l+Y769Lu+DD/c1J0At7+5DK/zXdzP/0vZ+3ceVeQejqWqvheuq3SN5PJMjDXuF/cXz0dGl+fZoU6hPIL4Xaqsvb39+4NmgVo1dzfoFWQxpmxJYu1D2W/rO5kFgfR9Ev8Q+yd6rLFL7ZrHf+ODy2fv3GH61+tE+//+ef7U0KVRTgmDROqdJrF99Jtlb6VTNaJ+rd70xnf7cuvyGCh/EIUh6XIuuFBkUizAK2a+xu0CuIf1OL3aIUy//snW/a+FqopVEgLlfH5zx9st9Kzd1AL9dAofZFOs/heuq3St5LJNvvtnWmefnHf6HP1CpVtVLRlXiHsTv4XsreFemjk32qhyg3OtVA3VdM4jnmEso2tX8aqD+XqdExO9qEax7+7D+V4+6O7I3pIy45DS6hWH6pj8Mmm0yy+l26r9O1k9navY9K6K+wT6vNjUnfEFcLu5GVd29+lePz1t60CtGrub9AuyGr6UHkx3Vls3+XZX82RLA5U111e4/h33+XZ+x1zqbCNzs2zOz2dQjXv8q4+pp/vi9PopVPUpii+l2679I1k3DXIFqDqPR7y2/6WUN7VqLgOl4Wwm3tZ1/bPNvzK9rgemgXoqnm5Qbsg7bu8fZx3eUWHpewlWMpDXPYUXT26x6Eax7/9oeU7/5yc6pSXBauNQ3WkU1AU30u3XfpmMvZDO2hi8nbb2xp+6heqevTiFaI4LEXW9QOyL//cKEC75t4GHQXxDqp/jEYyk1DewbPjsb9Py67QS9b7/PIv9i7PjHy8/94fKf+9S6spVOtDhxkzTn5tH7Bmt0TvvzVXks4+1I/Zx19WI+Wf/3Tn/t9KJ6fMu0q3XfpWMtkm+TBkqYmt4Q99QtUeDnuVsTtVWTcOiB0pt8eiXoB2zb0NugpSHdT07T/vki8+xtSHihiNR2NQgFAgCkKBKAgFolygUKAJQoEoCAWiIBSIglAgCkKBKAgFoiAUiIJQIApCgSgIBaIgFIiCUCAKQoEoCAWiIBSIglAgCkKBKAgFoiAUiIJQIApCgSgIBaIgFIiiLdT19bXq9hAZykJdX48zZOz2EBu6Ql1fjzNk7PYQHcJCJbBRlhKq/l9aqK0QiVD0obZCLEJxl7cRohFqPAgVIysWCqNiBKFAFIQCUdYsFEZFCEKBKAgFoqxaKIyKD4QCUdYtFEZFh5JQJmqSDXt36AlGgFAbRUeow9VT+npvY6sh1GWhItTb487+NIEfdYXCqNhQEer13sVA3t88I9SFodhCZexvEerCUOpD5Rr1h8sWu2nEqLhQu8tzF723R4S6LFY+DoVQsbF6oTAqLrSF0u6UI1Rk0EKBKOsXCqOiAqFAFKWR8ptnweTOgFAxoSTUb+923amMngI/AIyKCCWhdukhuZVK7hwIFRFqQqXpMTnhFEJtFEWhUuuU+jhUilExoSuUTHJnQah4QCgQZQPjUClGRQRCgSiaQmVd8qsnueROgVGxoCTUPkl2L795Lt8un5jcWRAqFnSE2t88p3vbOh16HsIg1EbRm/Xy8ksj1HGOcagUo6JBcdjg7X/T2VoohIoF3Vkv/SNSCLVRtGa9uNu7Y9LTJ5eP9IFRcbCNcagUoWIBoUCUzQiFUXGAUCAKQoEo2xEKo6IAoUAUhAJRNiQURsUAQoEoCAWibEkojIoAhAJREApE2ZRQGLU8CAWibEsojFochAJRlIR6e3TLivXMeUGozaI0SSEp1/OZaZJCAUYtjIpQZfCg+aZRFSDUwuhN9HTMNdGzAKEWZmstFEYtjFYfKm+iZu9DIdTCKN3lvd67u7ze9coRaqNsbBwqxaiFQSgQRVso/fBmTRBqUbbXQmHUoiAUiIJQIIrSSPmc4c1aYNSCKAk1a3izJgi1IGprbM4Y3qwJQi2I4qKts4U3a4FRy6EoVDpbeLMmCLUcukLJJDcahFqOTQqFUcuxwXGoFKEWBKFAFE2hZgxv1gSjlkJJqLnDmzVBqKXQEWr28GYtMGoh9Ga9zBverAlCLYTisMGs4c2aINRCKM16mT28WQuMWgalTvn84c2aINQybHMcKkWopdisUBi1DAgFoiAUiLJdoTBqERAKREEoEGXDQmHUEiAUiIJQIMqWhcKoBUAoEAWhQJRNC4VR84NQIApCgSjbFgqjZgehQBS9eXm3NsTZYq8A52DUzChNUjDz8szqUMtNUshBqJlREcoGDzouOtGzAKFmRm+ip5viudREzxKMmpett1AINTPKfSgvct6E5KaAUPOy9bs8jJqZjY9DpQg1MwgFomgLNX94sxYYNSfbb6EQalYQCkS5AKEwak60hg2yrtPL3XKrANdAqBlRWrTV+GTW2GyuAjxLeLMmCDUjemts7m0oqsUfvRgwaj7UHg7nD10WfzhsQKj5ULrkZa3TgRbqEtER6vX+3SfvlYOpyU0Go2ZDa9jg6LrevSE9EWqjXMI4FELNSIhQr/fJzfP+bIxFmXxlwKi5CBAq6xdlXe0BUTsXDG/WBKHmYrxQprNt7t363iOwLB3erAVGzcR4oYwjRqi+ESbD8uHNmiDUTIS3UPseVdIowps1QaiZCO5DHXpfF48ivFkLjJqHwLu8E91tQwThzZog1DwojUMtH96sCULNw2UMbBowahZC7vLyN5pODRvI5SvG9TVKzUBwC3Vq1EAyXymurzFqDsIvefveB7+i+QpxfY1RsxAu1LQmCqE2SrhQJx+9yOUrBELNRLBQr/eruuTRh5qJ8Lu8/icvovmKgU+zcDnjUIxEzQJCgSgIBaKMFKocJl/fSHmKUXNwSS0UQs0AQoEoAUIVlz0uedAmQKj9zfPhNn25639jUzJfSRBKn5CBzV16NLNeJo1sLiIURukTNuvl5Vef7L8Z8hUFodQJm/Xy+vXTaaGiWsGuAqHUCehDmdcM9ruTl7zeFezG5ysKQqkTMmywvzV3eidu8mJbwa4Co7S5iBXsKhBKm4tYwa4CobQJucs7/2ZdbCvYlSCUNiEDm+fmDRviWsGuBKG0CbvkHU/KIpqvMBilTHAf6u1xfc/yUoRSR7uFiiC8WQ2EUiZkpHxIH0osX2EQShmduzzBfKXBKF0u6gU7A0LpoiRUpA+HU4TSRmmkPKrwZjUQShelZ3mxPhxGKG0u7OFwilHKBC7aeiY0R7QPh1OEUiZ4WemToTmifTicIpQy4Qvfn14fKtKHwylCKRM2SeFcaA7BfOXBKE3CW6gToTkk85UHoTQJ7kOdCs1RbBjjwCZC6RJ4l3fu8XB04c08EEoTpZHy6MKbeSCUJmoDm5GFN/PBKEWC5uWZe7zk5DBUfOHNPBBKkbDVV9Izr0VFGN7MA6EUCRuHMpwch4ovvJkHQikSNg5lWFckhRoYpUfIYhm22Xm5O/V0WC5fDRBKj5BOuXkVc+o0BYTaKBf3TrkBofRAKBAlQCg7MW+VqwCXYJQaIeNQ04LDjsxXBYRSI2wV4BnzVQGh1Agf2JwpXxUQSo2Qgc1VT0V3YJQWIS/YnX+1TjBfHRBKi5BL3mrDm1UglBYXOQ6FUHogFIgSINR6w5t5YJQSYS/YrTS8mQdCKRE2sLnW8GYVCKVE2MDmwPBmJ1oxhNooYW9snglvNiB2+tJCYZQSIW9sng9vls+JibiFQiglgqZRnQtvZtoooxtCXR5q41Bm4jBCXR4BnfKv3dvk55bzOSQ7hLo8woU6O43q5e6LiIXCKB3GCrWv7t/Ovmf39tj/XgJCbZTwFmqmfNVAKBW0Hw7HFo2qAqFUCHo4vMt63MmkJy8RCIVRKoQ9HH65u80jJajnqwdCaRD2LM+8BbzaVYALEEqDMKHM1LyTwwbxRqOqQCgNQi55t+bByskFxyKORlWBUBqEvbF59XRyMlXM0ag8MEoBtUVbo41GVYFQCigtKx1xNKoKhFJAR6iYo1FVIJQCI4XKekfDJnrGG43KA6PkudB5eQ6EkgehQJTQtQ2GPMmLNBpVBULJM1qovXvH6XD6daiYo1FVIJQ8Y4Uqb9tOzhyOOhqVB0aJM1Iob4D8xNsGkUejqkAoccYPGxR/OPFwOPJoVBUIJc5oocoL3anXV+KORlWBUOLoCBV3NCoPjJJGSSi5fHVBKGkQCkQZLdTZdVWE89UFoaS56EcvCCXPhQuFUdIgFIiCUCAKQoEoly4URgmDUEsXYGMg1NIF2BgItXQBNgZCLV2AjXHxQmGULAiFUKIgFEKJglAIJQpCYZQoSkIdkiSfvxf1rBcLQkmiI5R5pdwtcYdQF4aKUG6xsbdHE/cToS4LtRXsDCY6MUJdFootVGpmF69AKIySRKkPlWvUH6cRoTaK2l2eu+i9PSLUZcE4FEKJglAIJYq2UGvolGOUILRQKUJJglApQkmCUClCSaIk1BrCm3lglBg6Qq0ivJkHQomh9CxvFeHNKhBKDLWHwysIb1aBUGIoXfJWEd6sAqHE0BFqHeHNPDBKCq1hg1WEN6tAKCkYh7IglBQIZUEoKTSFij68mQdGCaE1Ur6K8GYeCCWE0rDBSsKbVSCUEHqzXtYQ3qwCoYTQe/SyhvBmFQglhO6sl9jDm3lglAxas15WEt6sAqFkYBwqB6FkQKgchJIBoQowSgSEKkAoERCqAKFEQKgChBIBoQoQSgSEKsEoCRCqBKEkQKgShJIAoUoQSgKEqsAoARCqAqEEQKgKhBIAoSoQSgCEqkAoARDKA6Omg1AeCDUdJaHeHt3aBj1zXhBqsyhNUkjyuQnHZC2TFAwINR0VocrgQeuZRuXAqMnoTfR0rGWipwOhJkML5YNQk9HqQ+VN1Lr6UAg1HaW7vNd7d5fX0z4h1GZhHKoGRk0FoWog1FS0hVpFeLMKhJoKLVQNhJoKQtXBqIkgVB2EmojWoq3rCm9WgVATUVq0dWXhzSoQaiJ6a2yuKbxZBUJNRO3h8KrCm3lg1DSULnkrC2/mgVDT0BFqdeHNKhBqGlrDBisLb1aBUNNgHKoJRk0CoZog1CQ0hVpTeLMKhJqE1kj52sKbVSDUJJSGDVYX3qwCoSahN+tlXeHNPDBqCnqPXtYV3swDoaagNOtlfeHNKhBqCkqd8vWFN6tAqCkwDtUGoyaAUG0QagII1QahJoBQbRBqAgjVBqEmgFAdYFQ4CNUBQoWDUB0gVDgI1QFChYNQXWBUMAjVBUIFg1BdIFQwCNUFQgWDUF0gVDAI1QlGhYJQnSBUKAjVCUKFglCdIFQoevPybm2IsxW+AmzBqECUJimYeXlmpYw1TlKwIFQgKkJ5K/mscBqVBaEC0Zvo6aZ4rnCipwWhAqGF6gahAlHuQ3mR8yYktwQYFQZ3eT0gVBiMQ/WAUGEgVA8IFYa2UCsLb+aBUUHQQvWBUEEgVB8IFQRC9YFQQSiuYGfWvu/pQSHUZtETyo6Rry68mQdGhaAmVK7SWh+9pAgVhppQL3dWqLU+HE4RKgxaqF6ur8cpNXZ7/R2WKJGSUEUkqtW+YGeP1ajDO3Z7/R0WKZHWsEHm1NVTdqPX41P8Ql1fjzu8Y7fX32GZEi02DgUbZSGhpmcwukDjdsi+ecnI9mDU9vo7xFeiGgFCnQpvNj0DZaFSe7AUt9ffIb4S+Yx+we50eLOpGegLlWYHS3V7/R3iK5HHqNNxPrzZxAwCttffgRJp7TkgvNm0DEK2v8TTF1+JwvYcEN5sWgYh21/i6YuvRIF7ng9vNjGDgO0v8fTFV6LQPc+GN5uaQYwHixLNs6dSBvEdLEo0z54AHSAUiIJQIApCgSgIBaIgFIiCUCAKQoEoCAWiIBSIglAgCkKBKAgFomgL9fKroa92pmZx4STpnfLXx37wu362PHduqupQDkn/CrVdybvqDp/H4XYYXvHqeA6sd77D8HrnO4yseImyUK/3g98VNoc1OwuHUefbnLsxQh1vzAyL4Tkc7LTWwQc2r65Zy/04yCi3w/CKV8dzYL2LEg2ud77DyIpX6Ap1PLGUVBu3EEff8p3dvN6PEcqtrz48h7dHcw72QwXMq+tyGbJXvsPgilfHc2C9ayUaUu9yh1EV91AV6pjshs9mKHcaMenPvNz+xxFCuRkWwxl3XIvqjvDDPz7nK+5tP6zeZYmG1rvYIVKh0jHTYwr2Y/bIjtSYPtTx3f/cj+qljW35vdM3rObeVoMqnm8/vN52hzH1PsZ8yQsQqn8hjg5MUz5GqINpz923b3BxxkyTzk+f3WNYS1sdn2EVd9uPqLfdYUy98xKNrHhJbEIdx92DmZmnY4S6Gjep0LYaL3fDFQ8XamDF8/ZjeL2dUCPq7bYaW/GSyIQa1T65a8sooWxp8lX4hmQw9jYh+JI3tOJVBqOEGlHvcd3AFnEJdRg3CnXIl5oZfKl3pRneNR/T1lQZjDkb+fEZXPH8Cja83nkfani9RzeydaIS6hDSCxzTQrlFPoaXyakxog7HccMG5SVscMWrsoxpocbU2/tOjL+jikuooGv2uJFy0/noDfbXlXhIH2rEwGZx+gbnECbUmHpvqA+Vt+Qj29lxj16OIx/u7MdtX17BhtbCv4QN2SVQqBH1zncYWfESHg6DKAgFoiAUiIJQIApCgSgIBaIgFIiCUCAKQoEoCAWiIBSIglAgCkKBKAgFoiAUiIJQIApCgSgIBaIgFIiCUCAKQoEoCAWiIBSIglAgCkKBKAgFoiAUiIJQbmmL/tVPso/c4iUdvD3mCwH0rDMwfCWqzYBQRqheY9J+mQxvj27dOYQqQahpQn1hF/FCqBKEyoT6l7vErPp9cCvYvH79Z7PG6d4uEWciENz8n1uvK//4/g/3xeJxb4+3B7v+8s2zFS/78XJnPt6Z/czev7vLV8WpJ75dEKpsoczKpmaNrdd7096YBejMX8xH9mOzyLIJRvB6b8IeuLWcMqHsZzWhbFSETJrDu0/2P3bdrnriGwahCqFe701Lcnz3yf7y+vWTu2IVQrn13+y2u/JaZlZqzlfkrYTa5UvSZdu4NeAOeZpl4lsGoQqh3BqGmQVlr+mYJJVQTqHi43wbI1S+Zngl1EPumxXqwWXQTnyrIFQpVLG0rjvnWZ/n3X/fNYXKfmsKZdqdXqFslz372Uh8wyBUvYVKc1lKL862UFkPajewhUrP3DRuAYSq+lD5qXZdcLtad9LZh2oK9fLLD0aoXeVQJZTtQ+W6lYlvGYQqO9r2zm2fG+Map2Rn++qNu7ymUOk+uXl+ezT/kqZQRQyeWuJbBqHstW5fjENlDVPZh7p62ruPGuNQLaHsWECmX/KH1iXvd3f5mFUt8Q2DUCAKQoEoCAWiIBSIglAgCkKBKAgFoiAUiIJQIApCgSgIBaIgFIiCUCAKQoEoCAWiIBSIglAgCkKBKAgFoiAUiIJQIApCgSgIBaIgFIjy/wdKhvI0w/CZAAAAAElFTkSuQmCC" width="39%" style="display: block; margin: auto;" /> In case of the user want to get this plot again, the default function <em>plot()</em> can render this plot again thanks to the function plot.clara-seq which detect if the object passed as parameter is from the clara-seq’s class.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw">plot</span>(my_cluster)</span></code></pre></div>
+</div>
+<div id="research-of-the-best-clutering-with-the-davies-bouldin-index-method" class="section level3">
+<h3>Research of the best clutering with the Davies-Bouldin index method</h3>
+<p>The call of this function is similar as the one previously seen. The only difference is that the <em>find_best_method</em> must be specified as <em>DB</em>. In this example, we are using the same sequences creater previously.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>my_cluster &lt;-<span class="st"> </span><span class="kw">clara_clust</span>(mvad.seq,<span class="dt">nb_cluster =</span> <span class="dv">4</span>, <span class="dt">nb_sample =</span> <span class="dv">20</span>, </span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="op">+</span><span class="st">   </span><span class="dt">size_sample =</span> <span class="dv">20</span>, <span class="dt">with.diss =</span> <span class="ot">TRUE</span>, <span class="dt">find_best_method =</span> <span class="st">&quot;DB&quot;</span>)</span></code></pre></div>
+<p>This function will create the same type of console output as with the mean distance method :</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>CLARA ALGORITHM Improved</span>
+<span id="cb8-2"><a href="#cb8-2"></a></span>
+<span id="cb8-3"><a href="#cb8-3"></a></span>
+<span id="cb8-4"><a href="#cb8-4"></a>Table of Sample Values with DB Method</span>
+<span id="cb8-5"><a href="#cb8-5"></a></span>
+<span id="cb8-6"><a href="#cb8-6"></a>N°<span class="dv">1</span>  (Med<span class="op">:</span><span class="st"> </span><span class="dv">182</span>, <span class="dv">71</span>, <span class="dv">98</span>, <span class="dv">118</span>)  <span class="op">:</span><span class="st"> </span><span class="fl">1.342827221118</span>   <span class="op">|</span><span class="st">  </span>N°<span class="dv">2</span>  (Med<span class="op">:</span><span class="st"> </span><span class="dv">25</span>, <span class="dv">126</span>, <span class="dv">200</span>, <span class="dv">153</span>) <span class="op">:</span><span class="st"> </span><span class="fl">1.299852116316</span>   </span>
+<span id="cb8-7"><a href="#cb8-7"></a>N°<span class="dv">3</span>  (Med<span class="op">:</span><span class="st"> </span><span class="dv">77</span>, <span class="dv">174</span>, <span class="dv">189</span>, <span class="dv">179</span>) <span class="op">:</span><span class="st"> </span><span class="fl">1.40897064430</span>    <span class="op">|</span><span class="st">  </span>N°<span class="dv">4</span>  (Med<span class="op">:</span><span class="st"> </span><span class="dv">3</span>, <span class="dv">96</span>, <span class="dv">36</span>, <span class="dv">69</span>)     <span class="op">:</span><span class="st"> </span><span class="fl">1.248435482041</span>   </span>
+<span id="cb8-8"><a href="#cb8-8"></a>N°<span class="dv">5</span>  (Med<span class="op">:</span><span class="st"> </span><span class="dv">68</span>, <span class="dv">171</span>, <span class="dv">111</span>, <span class="dv">170</span>) <span class="op">:</span><span class="st"> </span><span class="fl">1.0031981757334</span>  <span class="op">|</span><span class="st">  </span>N°<span class="dv">6</span>  (Med<span class="op">:</span><span class="st"> </span><span class="dv">142</span>, <span class="dv">127</span>, <span class="dv">119</span>, <span class="dv">66</span>) <span class="op">:</span><span class="st"> </span><span class="fl">0.9345574879117</span>  </span>
+<span id="cb8-9"><a href="#cb8-9"></a>N°<span class="dv">7</span>  (Med<span class="op">:</span><span class="st"> </span><span class="dv">171</span>, <span class="dv">116</span>, <span class="dv">118</span>, <span class="dv">33</span>) <span class="op">:</span><span class="st"> </span><span class="fl">0.834863495085</span>   <span class="op">|</span><span class="st">  </span>N°<span class="dv">8</span>  (Med<span class="op">:</span><span class="st"> </span><span class="dv">127</span>, <span class="dv">90</span>, <span class="dv">101</span>, <span class="dv">31</span>)  <span class="op">:</span><span class="st"> </span><span class="fl">1.479710535507</span>   </span>
+<span id="cb8-10"><a href="#cb8-10"></a>N°<span class="dv">9</span>  (Med<span class="op">:</span><span class="st"> </span><span class="dv">74</span>, <span class="dv">189</span>, <span class="dv">92</span>, <span class="dv">32</span>)   <span class="op">:</span><span class="st"> </span><span class="fl">1.168584125339</span>   <span class="op">|</span><span class="st">  </span>N°<span class="dv">10</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">26</span>, <span class="dv">146</span>, <span class="dv">89</span>, <span class="dv">118</span>)  <span class="op">:</span><span class="st"> </span><span class="fl">1.50465609725</span>    </span>
+<span id="cb8-11"><a href="#cb8-11"></a>N°<span class="dv">11</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">22</span>, <span class="dv">157</span>, <span class="dv">65</span>, <span class="dv">142</span>)  <span class="op">:</span><span class="st"> </span><span class="fl">1.445766706488</span>   <span class="op">|</span><span class="st">  </span>N°<span class="dv">12</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">119</span>, <span class="dv">33</span>, <span class="dv">149</span>, <span class="dv">28</span>)  <span class="op">:</span><span class="st"> </span><span class="fl">1.264641148222</span>   </span>
+<span id="cb8-12"><a href="#cb8-12"></a>N°<span class="dv">13</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">126</span>, <span class="dv">91</span>, <span class="dv">179</span>, <span class="dv">74</span>)  <span class="op">:</span><span class="st"> </span><span class="fl">0.9903531541278</span>  <span class="op">|</span><span class="st">  </span>N°<span class="dv">14</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">146</span>, <span class="dv">66</span>, <span class="dv">94</span>, <span class="dv">111</span>)  <span class="op">:</span><span class="st"> </span><span class="fl">1.31802845133</span>    </span>
+<span id="cb8-13"><a href="#cb8-13"></a>N°<span class="dv">15</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">1</span>, <span class="dv">22</span>, <span class="dv">111</span>, <span class="dv">119</span>)   <span class="op">:</span><span class="st"> </span><span class="fl">1.970945630127</span>   <span class="op">|</span><span class="st">  </span>N°<span class="dv">16</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">155</span>, <span class="dv">139</span>, <span class="dv">65</span>, <span class="dv">201</span>) <span class="op">:</span><span class="st"> </span><span class="fl">1.655903988049</span>   </span>
+<span id="cb8-14"><a href="#cb8-14"></a>N°<span class="dv">17</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">63</span>, <span class="dv">20</span>, <span class="dv">93</span>, <span class="dv">182</span>)   <span class="op">:</span><span class="st"> </span><span class="fl">1.546096302749</span>   <span class="op">|</span><span class="st">  </span>N°<span class="dv">18</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">137</span>, <span class="dv">119</span>, <span class="dv">33</span>, <span class="dv">92</span>)  <span class="op">:</span><span class="st"> </span><span class="fl">1.388637698447</span>   </span>
+<span id="cb8-15"><a href="#cb8-15"></a>N°<span class="dv">19</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">179</span>, <span class="dv">115</span>, <span class="dv">95</span>, <span class="dv">3</span>)   <span class="op">:</span><span class="st"> </span><span class="fl">1.508608204084</span>   <span class="op">|</span><span class="st">  </span>N°<span class="dv">20</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">173</span>, <span class="dv">66</span>, <span class="dv">95</span>, <span class="dv">142</span>)  <span class="op">:</span><span class="st"> </span><span class="fl">1.186216041016</span>   </span>
+<span id="cb8-16"><a href="#cb8-16"></a></span>
+<span id="cb8-17"><a href="#cb8-17"></a>[<span class="op">&gt;</span>] Minimum Index Value <span class="cf">for</span> Sample N°<span class="dv">7</span></span>
+<span id="cb8-18"><a href="#cb8-18"></a></span>
+<span id="cb8-19"><a href="#cb8-19"></a>Calculation time <span class="op">:</span><span class="st"> </span><span class="fl">11.9299999999998</span> sec.</span></code></pre></div>
+<p>The same object of the same class than with the previous method will be created and the same type of plot can be rendered at any time with the same function :</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="kw">plot</span>(my_cluster)</span></code></pre></div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div id="clarans" class="section level2">
+<h2>CLARANS</h2>
+<p>CLARANS function has been implemented but is less efficient than CLARA. Indeed CLARANS cannot be parallelized and the calculation time is more important than CLARA’s. If we compare CLARA and CLARANS for the same amount of time, we get several better results for CLARA.</p>
+<div id="research-of-the-best-clutering" class="section level3">
+<h3>Research of the best clutering</h3>
+<p>The CLARANS algorithm can be called with the following function :</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>my_cluster2 &lt;-<span class="st"> </span><span class="kw">clarans_clust</span>(mvad.seq,<span class="dt">nb_cluster =</span> <span class="dv">4</span>, <span class="dt">maxneighbours =</span> <span class="dv">20</span>, <span class="dt">numlocal =</span> <span class="dv">4</span>,</span>
+<span id="cb10-2"><a href="#cb10-2"></a><span class="op">+</span><span class="st">   </span><span class="dt">plot =</span> <span class="ot">TRUE</span>)</span></code></pre></div>
+<p>The main parameters are the number of cluster (nb_cluster), the number of neighbours to explore (maxneighbours) and the number of tries to dp (numlocal) i.e. the number of time that we will initialise a set of medoids and visit <em>maxneighbours</em> neighbours.</p>
+<p>A console output will be written with a summary for each numlocal value :</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>CLARANS ALGORITHM</span>
+<span id="cb11-2"><a href="#cb11-2"></a></span>
+<span id="cb11-3"><a href="#cb11-3"></a>Table of Iteration Distance</span>
+<span id="cb11-4"><a href="#cb11-4"></a></span>
+<span id="cb11-5"><a href="#cb11-5"></a>N°<span class="dv">1</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">163</span>, <span class="dv">176</span>, <span class="dv">232</span>, <span class="dv">282</span>) <span class="op">:</span><span class="st"> </span><span class="fl">41.78651685393</span>   N°<span class="dv">2</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">570</span>, <span class="dv">306</span>, <span class="dv">662</span>, <span class="dv">435</span>) <span class="op">:</span><span class="st"> </span><span class="fl">51.21348314606</span> </span>
+<span id="cb11-6"><a href="#cb11-6"></a>N°<span class="dv">3</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">211</span>, <span class="dv">269</span>, <span class="dv">479</span>, <span class="dv">299</span>) <span class="op">:</span><span class="st"> </span><span class="fl">40.64887640449</span>   N°<span class="dv">4</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">7</span>, <span class="dv">469</span>, <span class="dv">89</span>, <span class="dv">562</span>)    <span class="op">:</span><span class="st"> </span><span class="fl">43.56741573033</span> </span>
+<span id="cb11-7"><a href="#cb11-7"></a></span>
+<span id="cb11-8"><a href="#cb11-8"></a>[<span class="op">&gt;</span>] Minimum Distance <span class="cf">for</span> iteration N°<span class="dv">3</span></span>
+<span id="cb11-9"><a href="#cb11-9"></a></span>
+<span id="cb11-10"><a href="#cb11-10"></a>Calculation time <span class="op">:</span><span class="st"> </span><span class="fl">16.6700000000001</span> sec.</span></code></pre></div>
+<p>The function will create an object of class <em>clarans_seq</em> with the following values :</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a> <span class="op">$</span><span class="st"> </span>seq <span class="co">#the original sequences dataset</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a> <span class="op">$</span><span class="st"> </span>id.med <span class="co">#the identifier of the medoids</span></span>
+<span id="cb12-3"><a href="#cb12-3"></a> <span class="op">$</span><span class="st"> </span>clusters <span class="co">#the resulting clustering</span></span>
+<span id="cb12-4"><a href="#cb12-4"></a> <span class="op">$</span><span class="st"> </span>diss <span class="co">#the matrix of distance of size k*n</span></span>
+<span id="cb12-5"><a href="#cb12-5"></a> <span class="op">$</span><span class="st"> </span>evol.diss <span class="co">#the value of the best value found for each numlocal value </span></span></code></pre></div>
+<p>The plot parameter determines if the quality plot must be render. If true, the following graph is drawn :</p>
+<p><img src="data:image/png;base64,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" width="40%" style="display: block; margin: auto;" /></p>
+<p>Again, this quality graph can be created with a clarans_seq object with the function :</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="kw">plot</span>(my_cluster2)</span></code></pre></div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div id="robust-fuzzy-c-medoids" class="section level2">
+<h2>ROBUST FUZZY C-MEDOIDS</h2>
+<p>This function comes from the fuzzy algorithm family and provide a fuzzy clustering based on samples from the big dataset. This variant applies a fuzzy clustering on each subset and takes the most popular objects as medoids (determined with the membership matrix). For this algorithm, the objective function to minimize is :<br />
+<span class="math display">\[\begin{align*}
+\sum_{x_j \in S} u^m_{i,j} d(med,x_j)
+\end{align*}\]</span> where <em>x_j</em> is an object in the dataset without outliers <em>S</em>, <em>i</em> is the cluster for which a medoid is being sought, and <em>med</em> is the medoid tested.</p>
+<p><strong>Warning</strong> this function has not been fully tested.</p>
+<div id="research-of-the-best-clutering-1" class="section level3">
+<h3>Research of the best clutering</h3>
+<p>This function can be used as follow :</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>my_cluster3 &lt;-<span class="st"> </span><span class="kw">fuzzy_clust</span>(mvad.seq,<span class="dt">nb_sample =</span> <span class="dv">14</span>, <span class="dt">size_sample =</span> <span class="dv">50</span>, <span class="dt">plot =</span> <span class="ot">TRUE</span>,</span>
+<span id="cb14-2"><a href="#cb14-2"></a><span class="op">+</span><span class="st">   </span><span class="dt">threshold =</span> <span class="dv">7</span>, <span class="dt">max_iter =</span> <span class="dv">10</span>, <span class="dt">p=</span><span class="dv">5</span>)</span></code></pre></div>
+<p>The main parameters are the number cluster, the number of subsets (nb_sample) and the size of each one of them (size_sample) as in the clara_clust() function, the threshold to exclude outliers (threshold), the maximal number of iterations to find the best set of medoids (max_iter) and the number of candidate to test to find a better medoid (p).</p>
+<p>A console output will be written with a summary of each iterations index value (the value of the function to minimize):</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>ROBUST FUZZY C<span class="op">-</span>MEDOIDS ALGORITHM</span>
+<span id="cb15-2"><a href="#cb15-2"></a></span>
+<span id="cb15-3"><a href="#cb15-3"></a>Table of objective <span class="cf">function</span> values</span>
+<span id="cb15-4"><a href="#cb15-4"></a></span>
+<span id="cb15-5"><a href="#cb15-5"></a>N°<span class="dv">1</span>  (Med<span class="op">:</span><span class="st"> </span><span class="dv">166</span>, <span class="dv">171</span>, <span class="dv">1</span>, <span class="dv">672</span>)   <span class="op">:</span><span class="st"> </span><span class="fl">306.3782076078</span>  <span class="op">|</span><span class="st">  </span>N°<span class="dv">2</span>  (Med<span class="op">:</span><span class="st"> </span><span class="dv">478</span>, <span class="dv">54</span>, <span class="dv">446</span>, <span class="dv">489</span>)  <span class="op">:</span><span class="st"> </span><span class="fl">284.7549317274</span>  </span>
+<span id="cb15-6"><a href="#cb15-6"></a>N°<span class="dv">3</span>  (Med<span class="op">:</span><span class="st"> </span><span class="dv">345</span>, <span class="dv">430</span>, <span class="dv">140</span>, <span class="dv">355</span>) <span class="op">:</span><span class="st"> </span><span class="fl">316.5071933888</span>  <span class="op">|</span><span class="st">  </span>N°<span class="dv">4</span>  (Med<span class="op">:</span><span class="st"> </span><span class="dv">228</span>, <span class="dv">184</span>, <span class="dv">685</span>, <span class="dv">504</span>) <span class="op">:</span><span class="st"> </span><span class="fl">351.6212640614</span>  </span>
+<span id="cb15-7"><a href="#cb15-7"></a>N°<span class="dv">5</span>  (Med<span class="op">:</span><span class="st"> </span><span class="dv">48</span>, <span class="dv">505</span>, <span class="dv">455</span>, <span class="dv">588</span>)  <span class="op">:</span><span class="st"> </span><span class="fl">367.0773016113</span>  <span class="op">|</span><span class="st">  </span>N°<span class="dv">6</span>  (Med<span class="op">:</span><span class="st"> </span><span class="dv">481</span>, <span class="dv">425</span>, <span class="dv">338</span>, <span class="dv">638</span>) <span class="op">:</span><span class="st"> </span><span class="fl">286.4788921731</span>  </span>
+<span id="cb15-8"><a href="#cb15-8"></a>N°<span class="dv">7</span>  (Med<span class="op">:</span><span class="st"> </span><span class="dv">412</span>, <span class="dv">120</span>, <span class="dv">77</span>, <span class="dv">639</span>)  <span class="op">:</span><span class="st"> </span><span class="fl">298.6053701533</span>  <span class="op">|</span><span class="st">  </span>N°<span class="dv">8</span>  (Med<span class="op">:</span><span class="st"> </span><span class="dv">502</span>, <span class="dv">158</span>, <span class="dv">190</span>, <span class="dv">51</span>)  <span class="op">:</span><span class="st"> </span><span class="fl">389.8523768593</span>  </span>
+<span id="cb15-9"><a href="#cb15-9"></a>N°<span class="dv">9</span>  (Med<span class="op">:</span><span class="st"> </span><span class="dv">192</span>, <span class="dv">646</span>, <span class="dv">666</span>, <span class="dv">363</span>) <span class="op">:</span><span class="st"> </span><span class="fl">387.4922466893</span>  <span class="op">|</span><span class="st">  </span>N°<span class="dv">10</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">253</span>, <span class="dv">467</span>, <span class="dv">214</span>, <span class="dv">223</span>) <span class="op">:</span><span class="st"> </span><span class="fl">319.6099482256</span>  </span>
+<span id="cb15-10"><a href="#cb15-10"></a>N°<span class="dv">11</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">173</span>, <span class="dv">554</span>, <span class="dv">585</span>, <span class="dv">495</span>) <span class="op">:</span><span class="st"> </span><span class="fl">334.3587832990</span>  <span class="op">|</span><span class="st">  </span>N°<span class="dv">12</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">453</span>, <span class="dv">2</span>, <span class="dv">144</span>, <span class="dv">109</span>)   <span class="op">:</span><span class="st"> </span><span class="fl">331.5818583005</span>   </span>
+<span id="cb15-11"><a href="#cb15-11"></a>N°<span class="dv">13</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">497</span>, <span class="dv">543</span>, <span class="dv">602</span>, <span class="dv">605</span>) <span class="op">:</span><span class="st"> </span><span class="fl">227.8510767599</span>  <span class="op">|</span><span class="st">  </span>N°<span class="dv">14</span> (Med<span class="op">:</span><span class="st"> </span><span class="dv">425</span>, <span class="dv">350</span>, <span class="dv">599</span>, <span class="dv">396</span>) <span class="op">:</span><span class="st"> </span><span class="fl">239.3543957804</span>  </span>
+<span id="cb15-12"><a href="#cb15-12"></a></span>
+<span id="cb15-13"><a href="#cb15-13"></a>[<span class="op">&gt;</span>] Minimum Index <span class="cf">for</span> Sample N°<span class="dv">13</span></span>
+<span id="cb15-14"><a href="#cb15-14"></a></span>
+<span id="cb15-15"><a href="#cb15-15"></a>Calcul time <span class="op">:</span><span class="st"> </span><span class="fl">14.27</span> sec.</span></code></pre></div>
+<p>The function will create an object of class <em>clarafuzzy_seq</em> with the following values :</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a> <span class="op">$</span><span class="st"> </span>seq <span class="co">#the original sequences dataset</span></span>
+<span id="cb16-2"><a href="#cb16-2"></a> <span class="op">$</span><span class="st"> </span>id.med <span class="co">#the identifier of the medoids</span></span>
+<span id="cb16-3"><a href="#cb16-3"></a> <span class="op">$</span><span class="st"> </span>clusters <span class="co">#the resulting clustering</span></span>
+<span id="cb16-4"><a href="#cb16-4"></a> <span class="op">$</span><span class="st"> </span>diss <span class="co">#distance matrix</span></span>
+<span id="cb16-5"><a href="#cb16-5"></a> <span class="op">$</span><span class="st"> </span>harm_value <span class="co">#harm value to adjust the threshold</span></span>
+<span id="cb16-6"><a href="#cb16-6"></a> <span class="op">$</span><span class="st"> </span>nb_iter <span class="co">#number of iterations needed to find the medoids</span></span>
+<span id="cb16-7"><a href="#cb16-7"></a> <span class="op">$</span><span class="st"> </span>membership <span class="co">#membership matrix</span></span>
+<span id="cb16-8"><a href="#cb16-8"></a> <span class="op">$</span><span class="st"> </span>q <span class="co">#value of the index for each iteration</span></span>
+<span id="cb16-9"><a href="#cb16-9"></a> <span class="op">$</span><span class="st"> </span>evol.diss <span class="co">#the value of the best value found for each iteration</span></span></code></pre></div>
+<p>The plot parameter determines if the quality plot must be render. If true, the following graph is drawn :</p>
+<p><img src="data:image/png;base64,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" width="40%" style="display: block; margin: auto;" /></p>
+<p>Again, this quality graph can be created with a clarafuzzy_seq object with the function :</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="kw">plot</span>(my_cluster3)</span></code></pre></div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div id="visual-representation-of-the-clustering" class="section level2">
+<h2>Visual representation of the clustering</h2>
+<p>With the package <em>TraMineR</em> it is possible to draw a graph with the sequence distribution. To do this, the function <em>seqdplot</em> will be use as follow (this example use the resulting clustering *my_cluster&quot; from CLARA but this graph works for each clustering algorithm) :</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a><span class="kw">seqdplot</span>(mvad.seq, my_cluster<span class="op">$</span>clusters)</span></code></pre></div>
+<p>A graph as the following can be obtained :</p>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAlAAAAIaCAMAAADY/4N9AAAA0lBMVEUAAAAAADoAAGYAOjoAOmYAOpAAZmYAZrY4bLA6AAA6ADo6AGY6Ojo6OmY6OpA6ZrY6kLY6kNtmAABmADpmAGZmOgBmOmZmOpBmZjpmZpBmZrZmkJBmkNtmtttmtv9/yX+QOgCQOjqQOmaQZjqQkJCQtpCQ27aQ29uQ2/+2ZgC2Zjq2Zma2kDq2kGa229u22/+2/9u2//++rtTbkDrbkGbbtmbb25Db27bb2//b/7bb/9vb///wAn/9wIb/tmb/25D/27b/29v//5n//7b//9v///87RtadAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAcEElEQVR4nO2dC3vbNppG6XQyjtLWqZzOzmQuiuO2E2tmu1tZze62TqkZS/z/f2l5kUiQAEgA/HAj3vOojU2TAvHqEATBi7ICAEIy3ysAlgWEAqRAKEAKhAKkQChACoQCpEAoQAqEAqRAKEAKhAKkQChACoQCpEAoQAqEAqRAKEAKhAKkQChACoQCpEAoQAqEAqRAKEBK+EJtX+x8r0L4nP6xyn734HstKkIX6l/fZRBqmk/ZX4vtVQhGBS7U8fZqBaHUyLON71UowhfqP/7rDkKpsYVQKpwglBp5hl2eChBKjcMqu/a9DhUQahmUPoWRE4RaBKe7MHZ4EGoh5FkQPfICQi2EbVax9r0aRQRCgbiAUIAUCAVIgVCAFAgFSIFQgBQIBUiBUIAUCAVIgVCAFAgFSIFQgBQIBUiBUIAUCAVIgVCAFAgFSIFQgBQIBUjREyprGPy6AKhT7b+r16qRolB1k7jaHz5nn4Wv6CYbpKCT0zSvXjGv/m+Xl9Kb/Pbb5cX8WL+en+vX5d/Li2NmTvaEUlg9v5P1trxZOUkUsTBZWyhucrAtVFNBP+YowQZqkIJOTiEJJU5h0jPVnMiEErW/Su00r0iWaQo14gpZULNyCkGoC5LJoQg18MckkWxoBufhqFDnMBQTSVeoiclip1wLldEkIrdS4NRQKD1zFi1Ur/3RFKrbKfoUynpQoq7iYDcHoaiEEuz7liHUuanqCcXUUbzP74mXqFCq5oxObkJk0oxZqLYGI13FcUXYUKrlyfoGQeVkU6immTt34Nlue4VGpX0GJfZHfyfWNvnMD1R9gxByciLU6GSNSvsLivGIbWtF2jCTuT5Uxh0Rc32DbgEIFZ9QDQqJMHJ0bW2vpX1m2h9m1nb3Vv9RrSm/vMOgu2WQAlVOVJOHESxOqOaTkifS2vY8WZmeQr2ZOr9Es44E1c60DKGG1V6uUHJa28aEGgTFmfP4OGiyygnMNL49k8hqkAJVTibmiKA1J1ihRrvCXBbtrxdaP5ppjCvNX7pXN0d/MmvYnKCs5aQxWd2m5QrVR3iAxtB++owLvWnDyYw5ApuGc//W7uqiFcqVOZaEOqyu/n7LPQBbR6j+pys4OnuWK0I+uXHOglBzctKY7NAcO0Kd7nfHtw/F8Y9PBkGJhGJbEQ9CyXtXStrYySkloY7f7spX9Y9BUE1rJP903QnV7k5L3r9nf2tRE8dKTikJdd7yDjcKW16W9X4Wd5wHbYUjoUqJGo+aH6pX9xuFUDo5JS1U9Q1HE30DtkvU/czt7MQfulOheq/hBBVtZuUEoVSWyV7xB3Lt+EBKQk3nBKEYur7BYAch3LFdrFL40M/LWxWqt6ezK5Q8p/SE2lf1V/2qEFYo+cfoRygOgU0zhDLMKTWh8iajveI3GnVBWd9baU+eMmeWUMY5JSbU8c+X3/456Fbm9UY+/Ca2YIUSNEiUQpnnlJhQUk539aYoPxwOTCgFc6z0oSZzSkyoqjNZdg5ePg3/eO5lygfsQhJKrfc9c5d39YPoq1gnc0pPqPya38C6Le/L8IVS7X3PEer04eGw2pjklJ5Q+zW/gRX1VyNH0odSNWdWH+rb3emeP8OikFNqQt2+/J+/Fty5zdFlmh/SEurcEBnklJhQ9eUXD4fXql+rHZZQ5+EmB0IVdUS58tePk9/MEY9QeoQllJ45Vo7yJnMiEWr62vtghDrd6QwApytU2ULlmeAobzKn1IT6x0NxeFPsr7WDSkuo6iivPMLjj/Imc0psl1cdtpRhCY5epoJKS6gyoHK7Ex3lTeVEIpRTc2YJVcpUXSNmsOWlJVTZkldRVVJp5pSYUMXxNss2sR7lORSq6WvyZxQmc0pNKE2SFco4JwilGBSEUssJQikGBaHUckpMqKoLVaE6wJKqUOY5JSZUUd0DpEGqQpnnlJpQRa585NIPKjGhjHNKTijliAZ3c3gXqrsOKqg+lJW7XqISarvR2PgCEkrbnJlCGeYEoRSD8itU7zJNCAWhZk0eXvQLoSCUsjncZPP7pSBU2kI15rA7OdntwBAqKKG0cChU83FnzNOdZpozUyjDnNITah/oSHn7iVOND8wUyjCn5ITSGwL2IRSVOfOEMs0pPaFUL0IcBJWcUIY5JSdU2dk0Cio1oUxzSk6o5jx6yH2oMIQyzSk5ofRIVyjTnBITSv7co6mg0hLKPKfEhAr4CXZBCeX5CXYRCWX87MjEhPL7jM2ohBqhuhVNFlRyQhnmBKEaJBdRQyjdnCDUmcNqjRZKgamcIFTL/uojhFJgPKc0hRKfVzjdcQ/YSlwog5zSFEqZxIUyyAlC9ZB/h4ldoWxcSWdTKMvf9RKTUHr3xLoSyoY584QyzSk5oYrqsdJ5QE+w0/jeH6ctlGFOJELF8wS7c2Mt6Gz6+a4Xm9f6zmyhDHMiEeoxIqHqJ3Dzl997+q4Xm+bME8o0p+SEqjsHwXzXS7hCmeaUnlBinH/XS6/vFKJQhjl13SDenIalCVVueX/jRnrdf9eLfXPmt1AmOY3Rbkqdc4O+eIRClZvYdhPAU4BDF8o0J0YeuVDyWeITqtz7bzden1MuGCgIUChPOcUnVL3lKd9kTS6UeMwpQKE85XRuuyISqj56MfgOk/lCuR7BnCeUp5ziE8rfjZ6uzZm9y/ORE4RSDwpCaUyORyhPdw57MGfmLs/vHdbxCOXpzuHohPJ8h3U8QumRrlCecoJQEIo0JyWhsozSHNHkLFMUSq+rma5Q3nKaFqoZYrcpVFOCWqWroPYavc2UhfKS07RQzRzkQvXPEGm1UBBqmjSEamh+ZkpvhnjUKg2hIhGq/aAlZ5jnC8WfrL6gmlMtlPKl9+c3pwoqNqF85cRMZv3h5p4v1PAD0s8JR3nqQnnLSXVy70BPX6iMu3gGQqUtVK+R0heq96GY5gShIBQj1PDSDwi1YKEylblnCjU/JwgVjVDvVeaWm3MeDhjvQ8UsVObl9pbkhBqOLIwIRZKTP6H8mLN0oZoDPW6EqhMuaqHkIyYZ3ZdxQqjH/vDU+Qfx3GMPSAhcqKz/VXd9z7yZs1ChmloovbdEKEEHKjCh5HX0aQ6E4m26tG5xCqVwKAGhnAjV62ZFKpRauwqhDIXq9Vllc4u761EKFcINeIsWqpe3fpFRCMWecAzBnCiFusQnHixXFOrcLMUu1HvrXxecgFDMSrNysJcFTAt1+TAkRbo5yjN+JGKwnSU7Qll+dCSz0gN/uLpwbzJ0blJJm0KZPxLRvyIuhbL96EiNunBvws0t9seNUKaPRAy4921FKNuPjtSoy2TLYzsnpRZK5ZGI7N45BEVcCmX70ZEx5TQ+y/Sj/trdMbt1hFB1l0LNenSkZFCI3VJjymneUd57UaMaRtWdCjWV05hQzQrIhYosJ5Uo5d9hshh0XUFOMuxsmyBZIBQgxWRgk1k6bshSRE5dVcf+KBmwG1l6eoLJMiRvojKLIchJcWbJgJ1O2YsJagzkpDizZMBOp+zFBDUGclKdWTxgp1P2YoIaBTmZzWxQ9mKCmkVCOUEoFySUk7tQQRJAKEAKhAKkQChACoQCpEAoQAqEAqRAKECKnlDVZRr8k9+39cSt6E/VWYly6n74aO92EeEzv8eK2WfZtWYxkkUsknBOWkJVZz8Pr4dnrPKXT6cPD/m1+Gz74as3xenD1zvBIuVLu5jDzdP5VKxyMbJF7JFyTnpCnS/4ySuVD1//oRF6v27+kwR18/3T8d39rvG/XKjaOppFZGfnx4qpCxIuIy/m5kn2kVgi5Zz0dnnbuumtKrLdlNtGI3Tl9121SuKm/ObHh/yb+125UBnkeYNqFsm/WInb2JFitn8RLzNSTNnMy68DsEPCOel2yo+3L3b1Ba+V0M0GV9br6k/ND6I29ubT5ueP5SZxWGVXD5eNqlnk30+yL+ORFrN9+aRbTB2X011ekXBO+kd5+3V+3azapQbFJSJRO3u4+eXd/U/3u/zF7vj2gblKVr7IWDHVUprFVLPnjnvlRbI5aQlVrkV1dWLTunZt7HXVPaxWRbxJ/Prdm9N99fe83SS6RURbHnUx1cYq+zyskHJOei3Uvmpce73AqoPZHtuK1qZc5/26rMHxNvv97aaqweQio8XsjYpx3EAlnJP5wKb8Hg9SHBVjj8RyglC2SSwnnHoBpEAoQAqEAqRAKEAKhAKkQChACoQCpEAoQAqEAqRAKEAKhAKkQChACoQCpEAoQAqEAqRAKEAKhAKkQChACoQCpEAoQAqEAqRAKEAKhAKkQChACoQCpEAoQAqEAqRAKEAKhAKkQChACoQCpEAoQAqEAqRAKEAKhAKkQChACoQCpEAoQAqEAqRAKEAKhAKkQChACoQCpEAoQAqEAqRAKEAKhAKkQChACoQCpEAoQAqEAqRAKEAKhAKkQChACoQCpEAoQAqEAqRAKEAKhAKkQChACoQCpIQu1M+r7Hf/7XsloiDPrn2vQkXgQh1W18fbl0++VyMCTncQSo3T3Yud73WIgDyDUGr86zaIoALndPfFKoicghfqeIs+lAL51Q8QSpHt1YPvVQie4+36AKEUybO171UInv2LHYRSJc82vlchdMpDvIoQjApcqE/Z+rTFUZ4KaKFUOP0nBjYVgVBgiUAoQAqEAqRAKEAKhAKkQChACoQCpEAoQAqEAqRAKEAKhAKkQChACoQCpEAoQAqEAqRAKEAKhAKkQChACoQCpOgJlTUMfl0A1Kn239Vr1UhRqLpJXO0Pn7PPwlf4k7WDSjSn5+feS6PSCw5KhHZQCeQEoaYni+SpXgsXSo7qfMYb3jKF6vIQ2bR8oURVbF78fOJAjHNahFD1liferhYrFNvq8NuRtOay9gdCsSnWQaklshihmLoIpqnXHEINJzgKKrScIBSEmlnzTFTtqi7iHjSE0p7cS3E8ES7twQSDFJzn9Nz/za45KQmltkH2ef9+/KDYIAWHOV2OWGf1pyGUbLK86m3OrUXv6/+954UaTDBIwWFOr15VL6fmpCOU6HDusskOjOkL1XsNJTNIwWFOEIp+ctfU8yq1asjNmZpskILDnCAU8WRJl6GnkKI5ECp5obje93CvBqHiEeqwuvr7bTZ8aKpboQZVEu7YfAtlOafFCHW63x3fPhTHP/a/vcehUHxnO0ShbOe0GKGO3+7KV/WPnaCmJ19aJTJzrAhlOyfR4UiUQp23vMONtxZqaFOYQtnOyYM5doQq8sxzH4q8922nD2U5p+UINbGMfaHIzbEjlJ2cGhYoVNc3GIwr2z9pF5VQ1Dk1ffEFCiVdhnbfFr1QpDmVNEJlihdUhCXUvlpv1W8RIxeK5XP3a1mBdIVqbDoPGMQm1Pkb6fbc94jl9Qc7/AJEG0I98xdnRCSUhZxiFur458tv/+wfp5zuasMsDxuMXQ4eh1CzcmobZiaQdn8Xp1BSzr1MywObUqEC7EOJuwazcmq73u3rVc+mJQl12fK+tCfU2Ajw42NgQsm6BqY5MU0Ry3KFKg4r232osXNUobVQ0q6BaU6cOedX7EIdb5stQ/WrWCnPUUmEsnYWeOYuT4tkhSqqE1GUQalOZs6isz2pknJvJ9zf+d7lXf2wUt7upDnJ9219oXrHvFEJVeQvnybmUwnKWKjGoJbLz6EJdfrwcFhtuIM57ZzkTVF/sk9zZgqlB6VQF4PYVza8YSUQocqjuNM9f5WKdk4QSjEoE6HKlXzsNU+Z4g0rPlqo5mBueB2dQk59lIQSjKZAqNHJbfdAtnsLTqji8Lrsa+bDgzmFnFR738xkz+bMEsrPUV4bmlNzZgmliZpQ/MB4JmqeYhLKw1HeecAgQqHKnrl+TtNNUW+UIABz5gnl+Civ3SCfm8HLWIQyb8mTE0oPc6HY5r09wItGqOKwWttqoVhCMGeeUEQDdlNCcafQm1GCeIQqiv3VRztChWbOLKGoBuxGheoPDDPHd1EJVZzulA/y0hWKasBuVCjmKLk9hvFgzlyhdEhWKPMBO40BJ9GAXXxCbTcaxy/JCqU+YHeWo/1VdcDpkt9gfGWxQg1zkggV8IDTPKE0MRWKC2+xQg1zkggVgiKWhDIMakyowakr7nDYz0k7CBWjUNzJhHNXobdu3QW+CQoV/ICTJ6GY2+g+Sy8c67oK8bdQWowIFY4iYQn1qrdL6x+9DMPrrV5m/QE9doTaU5x6yUK6BjM0oeSHw+wZO2b1WmIUSu8suiynoBSxJJQWyuMrw+Pi6n/dFZkxCqU69juaU1CKWBKKpCmfGrBrzwZ7NGeeUGVLrjpnwXUNupO/ISliRyiapnxUqMolUfMUlVDNBSwmG55/F9wKRdKUy4XKzjdGCWyKSig92KNh/y44Fcq8KVcQKvNyY5QFoeR3Dk/lFIILToUyb8olQrXbZHa5SSoQc2a1UNLHHk3lFIILblsoLRROerZr4O1OOxtCGT+YLQQXHApl3pSLhsSZUwrtzi4cc2YKpUWyQpk35fzZld56BDiC6UuoYULBKGJFKOOmnB9Z6dYjzPEBX0I1u/4AFbEk1Aj8bR6TTbnsiC4Ac+wJNZ4ThKqQ3IjGC5UNHsbj8uFzzoXiB+0mc8q6g5PQFHEqlORGNL5v0G58lxHMJQtlkBPzaJnQFHErlPhGNH7Lax+fcv41NaGmckpTKPH5F8GNaMKgeq+lCjVyM7pqTmmcHNYjXaGKfXkknF/PzCkoRXwIJf9SnNSEqpOQnklXzakbaglAETtC6T1XJF2h6ltila9tHc8pEEUstVAkTfnyhaq3POVrpRMWStaUT30pTnJCSTDJKRPcqBj8nnA6imYWSVM++aU4UqGWOlJetlB/45/nY5pT/8OKoeGaTihrgxI05ZNfiiMVyr8iVoQqzdlu+McemebUPw+6KKGk+VX/yL8UJzWhSmW2G75rYJ4TO4iwKKHETfnkl+JItzz/ithroQRHeYY5LVcoSVM+uowsqCyMZ9JZEaruGhg8OnJMqBZJXz1KoSRNuVFQgShiRSjTu4PGhJrqq0cplKwp1w4qC/3icQjlRCiypjwcRawIZXq7mZ5QAd/Fp1ppmi0vhrsRZrZQhreb6QnFX9mZolCR3I0ws4XSImGhZjXlgkvIA1AEQnltoeY05WEqYkEovXY8aaH0YIOK7aTdXKH2Gk25uVDifnkSQvl3YYlCPQobqWiEMm/K4zvHErBQ3Xh591toV6CrVdo8qBBccCiU8fflKQnVrAk3GUKFoYgFoXSBUNpBheDCwoS63HgdtVDKTfnwbo4QXAhRKJ27gwZCVY1U7EJpx9X+EIILIQo1zGlMqJZ2ZbLeTBnzMMA+l8n2hWrRqLRRUCG4ELtQorV7FDVS3OKXyfaF0sgJQkEoCBWhUIPrMieEyroHJ3fmiLhMJheqD4QKTqi2JCWhmvnaBc7NxHC+5i/MHIRCGecEoSAUhIpOqN4hHLP7GxGqXabb7wznu0weHPbNFyqTXimpUWmjoEJwIQahJKsxJpTa5Gr587/DdmqGUHNyglAehep3eE3qcmm4+OEpqTmS9kzYB4dQcQlFPbnXTsmEEgzBV5OpcoJQEApCQSjxZIVdHr9rPE+GUBBKMnlUqEduvqYbDqEglGyypBHimqJeNxxCQSjZZGbQlBfKek7js0w96i8EF0IQKqicAhZq8lF/IbgQgFBh5cQRjlCTj/oLwYUAhAo8p3CEmnzUXwguBCBU4DmZ9L7tCDX5qL8QXAhAKOQkqLQGSQaFnOiEkn+HyWLQdQU5ybCzbYJkmSeU7w1mJkQZIie2qqN/FQ/YjSw9PcFkGZI3UZnFFOSkNrNkwE6n7MUENQZyUpxZMmCnU/ZighoDOSnOLBmw0yl7MUGNgZxUZxYP2OmUvZigRkFOZjMblL2YoGaRUE4QygUJ5eQuVJAEEAqQAqEAKRAKkAKhACkQCpACoQApEAqQoidUdZkG/4T8bT1xK/pTdVainLofPgK9XUT4bPSxYvZZdq1ZjGQRiySck5ZQ1dnPw+vhGav85dPpw0N+LT7bfvjqTXH68PVOsEj50i7mcPN0PhWrXIxsEXuknJOeUOcLfvJK5cPXf2iE3q+b/yRB3Xz/dHx3v2v8Lxeqto5mEdnZ+bFi6oKEy8iLuXmSfSSWSDknvV3etm56q4psN+W20Qhd+X1XrZK4Kb/58SH/5n5XLlQGed6gmkXyL1biNnakmO1fxMuMFFM28/LrAOyQcE66nfLj7YtdfcFrJXSzwZX1uvpT84Oojb35tPn5Y7lJHFbZ1cNlo2oW+feT7EuLpMVsXz7pFlPH5XSXVySck/5R3n6dXzerdqlBcYlI1M4ebn55d//T/S5/sTu+fWCukpUvMlZMtZRmMdXsueNeeZFsTlpClWtRXZ3YtK5dG3tddQ+rVRFvEr9+9+Z0X/09bzeJbhHRlkddTLWxyj4PK6Sck14Lta8a114vsOpgtse2orUp13m/LmtwvM1+f7upajC5yGgxe6NiHDdQCedkPrApv8eDFEfF2COxnCCUbRLLCadeACkQCpACoQApEAqQAqEAKRAKkAKhACkQCpACoQApEAqQAqEAKRAKkAKhACkQCpACoQApEAqQAqEAKRAKkAKhACkQCpACoQApEAqQAqEAKRAKkAKhACkQCpACoQApEAqQAqEAKRAKkAKhACkQCpACoQApEAqQAqEAKRAKkAKhACkQCpACoQApEAqQAqEAKRAKkAKhACkQCpACoQApEAqQAqEAKRAKkAKhACkQCpACoQApEAqQAqEAKRAKkAKhACkQCpACoQApEAqQAqEAKRAKkAKhACkQCpACoQApEAqQAqEAKRAKkAKhACnJCJV5xnf9XYGKJlG8O1DRJIp3ByqaRPHuQEWTKN4dqGgSxbsDFU2ieHegokkU7w5UNIni3ZFgRVWHGpXHJFVmTDDnhcMI9b6mm5CXLlw9HFaboti/2HXz/dbQzni4ear+a2Zn3/pVQ/8dy3c73dX/9ItfOAlWlBfquvr/4as3xenD1wpCXQ/feijU4ctdcXj9cLpbF8e3D4PiF06CFZUJdfP90/HdPYlQ5YyXf/73/wbFL5wEKyrc5b18Otz8+JB/MyrUqp6xmZ19a26Xt82qXSdrXoI5LxyFFurT5uePJC1UyfH2xQ5CLZmRo7yLUL+8u/+JFWo4o1Qo4VHefn3e8w2KXzioaCfUr9+9OTFCcciE4t+w3OGd7jZ1p/x2PVX8skBFmz5UtilV2a+VhMqydjRAwr6cY13t9+p/JopfFqhoEsW7AxVNonh3oKJJFO8OVDSJ4t2RYEW5g/x6wHLNn6LjRwPKLjk7FiCZsX6/7OqH6p/LEWGCOS8cRqjHGkao2hF+eOm5YVqozw3MjPt187aXU3kp5rxw/AhVbHG1wUIZE2olPkWHFsqABCvqrIVaZe24Zoo5Lxwvu7y2gUox54UzdpQnEWo443ajdpRXdLu86lK7QfELBxVthZo8RZdXfz+wgwFSuk75uVuGnJcGBjbdgIomUbw7UNEkincHKppE8e5ARZMo3h2oaBLFuwMVTaJ4d6CiSRTvjnQq6hnf9XdFMhUFboBQgBQIBUiBUIAUCAVIgVCAFAgFSIFQgBQIBUiBUIAUCAVIgVCAFAgFSPl/ax1TdJJ6Kd0AAAAASUVORK5CYII=" width="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

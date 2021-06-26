@@ -18,7 +18,7 @@
 #' @param with.diss Boolean if the distance matrix should be returned
 #' @param cores Number of cores to use for parallelism
 #'
-#' @return An object with the data, the medoids id (name of the line), the clustering and the distance matrix
+#' @return An object of class clara_seq
 #' @export
 #'
 #' @examples
@@ -212,7 +212,7 @@ clara_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
 #' @param plot Boolean variable to plot the research convergence
 #' @param cores Number of cores to use for parallelism
 #'
-#' @return An object with the data, the medoids id (name of the line), the clustering and the distance matrix
+#' @return An object of class clarans_seq
 #' @export
 #'
 #' @examples
@@ -345,7 +345,7 @@ clarans_clust <- function(data, nb_cluster, distargs = list(method = "LCS"), max
 #' @param plot Boolean variable to plot the research convergence
 #' @param cores Number of cores to use for parallelism
 #'
-#' @return An object with the data, the medoids id (name of the line), the clustering and the distance matrix
+#' @return An object of class clarafuzzy_seq
 #' @export
 #'
 #' @examples
