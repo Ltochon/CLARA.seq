@@ -590,7 +590,7 @@ fuzzy_clust <- function(data, nb_sample = 100, size_sample = 40 + 2*nb_cluster, 
 
 davies_bouldin <- function(seq_obj, distargs = list(method = "LCS"), diss = TRUE, plot = TRUE, cores = detectCores()-1){
   message(paste("\nDAVIES-BOULDIN INDEX for", class(seq_obj)[1],"Clustering\n"))
-  if(!(is(seq_obj,c("clara", "partition")) || is(seq_obj,c("clarans", "partition")) || is(seq_obj,c("clara-fuzzy", "partition")))){
+  if(!(is(seq_obj,"clara_seq") || is(seq_obj,"clarans_seq") || is(seq_obj,"clarafuzzy_seq"))){
     stop("Seq_obj must come from clarans_clust, clara_clust or fuzzy_clust")
   }
   start.time <- proc.time() #debut du processus
@@ -652,9 +652,10 @@ davies_bouldin <- function(seq_obj, distargs = list(method = "LCS"), diss = TRUE
     }
   }
   final_db <- mean(maximum)
-  db_evolution <- cumsum(maximum) / c(1:length(seq_obj$id.med))
+  print(maximum)
+  # db_evolution <- cumsum(maximum) / c(1:length(seq_obj$id.med))
   if(plot){
-    plot(db_evolution, main = "Evolution of Davies-Bouldin Index by cluster addition", type = "o", xaxt = "n",xlab = "Cluster number", ylab = "Davies-Bouldin Index", col ="orange", pch = 19, lwd = 1)
+    barplot(maximum, main = "Davies-Bouldin Index", xaxt = "n",xlab = "Cluster number", ylab = "Davies-Bouldin Index value", col ="lightblue")
     axis(1, at=1:length(seq_obj$id.med), labels= 1:length(seq_obj$id.med))
   }
   message("Value of DB Index for a ", length(seq_obj$id.med), "-clusters : ", final_db)

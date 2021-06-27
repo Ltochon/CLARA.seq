@@ -158,8 +158,6 @@ The same object of the same class than with the previous method will be created 
 plot(my_cluster)
 ```
 
-\newpage
-
 ## CLARANS
 
 CLARANS function has been implemented but is less efficient than CLARA. Indeed CLARANS cannot be parallelized and the calculation time is more important than CLARA's. If we compare CLARA and CLARANS for the same amount of time, we get several better results for CLARA.  
@@ -210,7 +208,6 @@ Again, this quality graph can be created with a clarans_seq object with the func
 plot(my_cluster2)
 ```
 
-\newpage
 
 ## ROBUST FUZZY C-MEDOIDS
 
@@ -277,10 +274,48 @@ Again, this quality graph can be created with a clarafuzzy_seq object with the f
 plot(my_cluster3)
 ```
 
+## Quality analysis
+A quality analysis can be execute with the help of the Davies-Bouldin function and the *TraMineR* package.  
+For the following examples, the object *my_cluster* coming from the previous CLARA clusterin is used but the quality analysis is working with every object from each functions.
+
+### Davies-Bouldin Index
+
+Davies-Bouldin provides a quality analysis index working with big datasets because it doen't require to compute the complete distance matrix. Indeed, this index aims to calculate the following equation :
+\begin{align*}
+\frac{1}{K} \sum_{k \in K} \max_{k' \neq k} \frac{diam(k) + diam(k')}{dist(k,k')}
+\end{align*}
+
+where K is the set of cluster, k and k' are two clusters in K, diam(k) is the diameter of the cluster k and dist(k,k') is the distance between the medoids of k and k'.
+
+The calculation of this index on an object coming from one of the three algorithms of this package can easily be done :
+
+```R
+db <- davies_bouldin(my_cluster)
+```
+
+The call of this function will produce a console output as follow :
+
+```R
+DAVIES-BOULDIN INDEX for clara_seq Clustering
+
+Value of DB Index for a 4-clusters : 1.23197050017674
+Calcul time : 0.0100000000002183 sec.
+```
+This index is very fast to compute even with a big dataset.
+
+A plot can also be rendered illustrating the value of the index for each cluster. The resulting global index is the mean of these different values :
+
+```{r , echo=FALSE, out.width = '50%',fig.align='center',fig.show='hold'}
+knitr::include_graphics("C:/Projet_Bachelor/projet-de-bachelor/img_doc/db.png")
+```
+
+Finally, the function *davies_bouldin* has as output the value of the global index.
+
 \newpage
 
-## Visual representation of the clustering
-With the package *TraMineR* it is possible to draw a graph with the sequence distribution. To do this, the function *seqdplot* will be use as follow (this example use the resulting clustering *my_cluster" from CLARA but this graph works for each clustering algorithm) :
+### Visual representation of the clustering
+
+With the package *TraMineR* it is possible to draw a graph with the sequence distribution. To do this, the function *seqdplot* will be use as follow : 
 
 ```R
 seqdplot(mvad.seq, my_cluster$clusters)
