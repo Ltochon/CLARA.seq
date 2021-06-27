@@ -1,6 +1,8 @@
 ---
 title: "User Guide"
-author: "Louis Tochon and Matthias Studer"
+author: 
+- "Louis Tochon"
+- "Matthias Studer"
 geometry: margin=1.5cm
 date: "06/11/2021"
 output:
@@ -9,7 +11,7 @@ output:
     toc_depth : 4
   html_document: default
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{User Guide}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
