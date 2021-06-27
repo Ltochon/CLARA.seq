@@ -6,7 +6,9 @@ Author: Louis Tochon (with Matthias Studer)
 Maintainer: Louis Tochon <louis.tochon@etu.unige.ch>
 Description: Clustering algorithm (CLARA) to handle big datasets and index to evaluate the quality of the partition. This package works with the help of TraMineR's package for distance calulations. 
 Imports: TraMineR, cluster, dplyr, doParallel, parallel, foreach
+Suggests: knitr, rmarkdown
 License: GPL
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
+VignetteBuilder: knitr
