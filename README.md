@@ -12,6 +12,12 @@ library(devtools)
 install_github("Ltochon/CLARA.seq")
 ```
 
+If the vignette are not refreshed and you can't see the CLARA.seq's one, use this line :
+
+```R
+devtools::install(build_vignettes = TRUE)
+```
+
 ## Algorithms
 This package contains 3 differents algorithms
 - CLARA
