@@ -36,7 +36,7 @@ clara_clust(
 \item{cores}{Number of cores to use for parallelism}
 }
 \value{
-An object with the data, the medoids id (name of the line), the clustering and the distance matrix
+An object of class clara_seq
 }
 \description{
 With the help of TraMineR package, CLARA clustering provide a clustering of big dataset.\cr The main objective is to cluster state sequences with the "LCS" distance calculation method to find the best partition in N clusters.

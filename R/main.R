@@ -660,7 +660,7 @@ davies_bouldin <- function(seq_obj, distargs = list(method = "LCS"), diss = TRUE
   }
   message("Value of DB Index for a ", length(seq_obj$id.med), "-clusters : ", final_db)
   end.time<-proc.time() #fin du processus
-  message("Calcul time : ", (end.time-start.time)[3], " sec.")
+  message("Calculation time : ", (end.time-start.time)[3], " sec.")
   return(final_db)
 
 }

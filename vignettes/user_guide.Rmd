@@ -1,10 +1,10 @@
 ---
-title: "User Guide"
+title: "User Guide for CLARA.seq"
 author: 
 - "Louis Tochon"
 - "Matthias Studer"
 geometry: margin=1.5cm
-date: "06/11/2021"
+date: "06/27/2021"
 output:
   pdf_document: 
     toc: true
@@ -15,6 +15,7 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
 \newpage
 
 # Introduction
@@ -22,9 +23,9 @@ CLARA.seq is a R-package to cluster big datasets of sequences. It uses the TraMi
 The package has an index called Davies-Bouldin index to check the validity of the clustering found after the use of a clustering method.
 
 # Installation
-This package is still in a test phase. Therefore it is only available on GitHub. The link to the repository is : https://github.com/Ltochon/CLARA.seq
+This package is still in a test phase. Therefore it is only available on GitHub : [Link to repository](https://github.com/Ltochon/CLARA.seq).
 
-To download the package and get the functions in your personnal environnement, here are the commands :
+To download the package and get the functions in your personal environment, here are the commands :
 
 ```R
 install.packages("devtools")
@@ -36,43 +37,45 @@ library(CLARA.seq)
 # Use cases
 
 ## Creation of sequences
-To begin the creation of sequences to cluster is needed. The use of the TraMineR package allows to get example datas :
+To begin, the creation of sequences is needed. The use of the *TraMineR* package allows to get example datas :
 
 ```R
 #creating sequences
 library(TraMineR)
 data(mvad)
-mvad.labels <- c("employment", "further education", "higher education","joblessness", "school", "training")
+mvad.labels <- c("employment", "further education", "higher education","joblessness",
++   "school", "training")
 mvad.scode <- c("EM", "FE", "HE", "JL", "SC", "TR")
 mvad.seq <- seqdef(mvad, 17:86, states = mvad.scode,abels = mvad.labels, xtstep = 6)
 ```
 
 ## CLARA
-CLARA has been implemented with a parameter which can determine which aspect of the clustering is the most important. Indeed the parameter *find_best_method* allows users to choose between :
+CLARA has been implemented with a parameter that can determine which aspect of the clustering is the most important. Indeed the parameter *find_best_method* allows users to choose between :
 
 * **Distance** : finding the best clustering with the mean distance method which aims to minimize the distance between each object and his medoid
 * **DB** : finding the best clustering with the Davies-Bouldin index method which aims to minimize the index of the global clustering
 
-### Research of the best clutering with the mean distance method
+### Partitioning sequences with the mean distance method
 
-With the sequences previously created, the clustering can be applied on them. The process will be parallelized to find the best clustering faster. 
-The number of cores used is initially set to use all possible cores minus one to avoid any overloads. 
+With the sequences previously created, a clustering can be applied on them. The process will be parallelized to find the best clustering faster. 
+The number of cores used is initially set to use all possible cores minus one to avoid any overloading. 
   
-The most important parameters are the number of clusters (nb_cluster), the number of subsets to use (nb_sample) and the size of each one of thes subsets (size_sample). 
+The function call is as follow for CLARA with the mean distance :
+
+```R
+my_cluster <- clara_clust(mvad.seq,nb_cluster = 4, nb_sample = 20, size_sample = 20, with.diss = TRUE)
+```
+
+The most important parameters for this algorithm are the number of clusters (*nb_cluster*), the number of subsets to use (*nb_sample*) and the size of each of these subsets (*size_sample*). 
   
-**Warnings** the calculation time will increase exponentially according to the size of each subset as shown on this figure :
+**Warnings** the calculation time will increase exponentially according to the size of each subset, as shown on this figure :
 ```{r , echo=FALSE, out.width = '39%',fig.align='center',fig.show='hold'}
 knitr::include_graphics("C:/Projet_Bachelor/projet-de-bachelor/R_code/Baobab/Distance_calc_time.png")
 ```
-The calculation time has been analyzed on the supercomputer of the University of Geneva *Baobab* using an Intel® Xeon® E5-2660 processor.
+The calculation time has been analyzed on the supercomputer of the University of Geneva, *Baobab*, using an Intel® Xeon® E5-2660 processor.
 
-The function calls is as follow for CLARA with the mean distance :
 
-```R
-my_cluster <- clara_clust(mvad.seq,nb_cluster = 4, nb_sample = 20, 
-+   size_sample = 20, with.diss = TRUE)
-```
-A console output will be written with a summary of each iterations mean distance value :
+When all iterations have been done, a console output will be written with a summary of the mean distance value of each iteration :
 
 ```R
 CLARA ALGORITHM Improved
@@ -107,22 +110,22 @@ The function will create an object of class *clara_seq* with the following value
  $ find_best_method #method used to find the best clustering
 ```
 
-The plot parameter determines if the mean distance value's evolution must be shown at the end.
+The plot parameter determines if the evolution of the mean distance value must be shown at the end.
 
-The graph is the representation of the value evolution for each iteration (depending of the method used) :
+The graph is the representation of the value evolution for each iteration (depending on the method used) :
 ```{r , echo=FALSE, out.width = '39%',fig.align='center',fig.show='hold'}
 knitr::include_graphics("C:/Projet_Bachelor/projet-de-bachelor/img_doc/dist_graph.png")
 ```
-In case of the user want to get this plot again, the default function *plot()* can render this plot again thanks to the function
-plot.clara-seq which detect if the object passed as parameter is from the clara-seq's class. 
+In case the user wants to get this plot again, the default function *plot()* can render it again, thanks to the function
+*plot.clara-seq()* which detects if the object passed as parameter is from the *clara-seq*'s class. 
 
 ```R
 plot(my_cluster)
 ```
 
-### Research of the best clutering with the Davies-Bouldin index method
-The call of this function is similar as the one previously seen. The only difference is that the *find_best_method* must be specified as *DB*.
-In this example, we are using the same sequences creater previously.
+### Partitioning sequences with the Davies-Bouldin index method
+The call of this function is similar to the one previously seen. The only difference is that the *find_best_method* must be specified as *DB*.
+In this example, we are using the same sequences created earlier
 ```R
 my_cluster <- clara_clust(mvad.seq,nb_cluster = 4, nb_sample = 20, 
 +   size_sample = 20, with.diss = TRUE, find_best_method = "DB")
@@ -152,26 +155,23 @@ N°19 (Med: 179, 115, 95, 3)   : 1.508608204084   |  N°20 (Med: 173, 66, 95, 14
 Calculation time : 11.9299999999998 sec.
 ```
 
-The same object of the same class than with the previous method will be created and the same type of plot can be rendered at any time with the same function :
+The same object of the same class as with the previous method will be created, and the same type of plot can be rendered at any time with the same function *plot()*.
 
-```R
-plot(my_cluster)
-```
 
 ## CLARANS
 
-CLARANS function has been implemented but is less efficient than CLARA. Indeed CLARANS cannot be parallelized and the calculation time is more important than CLARA's. If we compare CLARA and CLARANS for the same amount of time, we get several better results for CLARA.  
+CLARANS function has been implemented but is less efficient than CLARA. Indeed, CLARANS cannot be parallelized and the calculation time is bigger than CLARA's. After many tests, it has been shown that for the same amount of time, we get better results for CLARA.  
 
-### Research of the best clutering
+### Partitioning sequences
 
 The CLARANS algorithm can be called with the following function :
 ```R
 my_cluster2 <- clarans_clust(mvad.seq,nb_cluster = 4, maxneighbours = 20, numlocal = 4,
 +   plot = TRUE)
 ```
-The main parameters are the number of cluster (nb_cluster), the number of neighbours to explore (maxneighbours) and the number of tries to dp (numlocal) i.e. the number of time that we will initialise a set of medoids and visit *maxneighbours* neighbours. 
+The main parameters are the number of clusters (*nb_cluster*), the number of neighbours to explore (*maxneighbours*) and the number of tries to do (*numlocal*) i.e. the number initialization of the initial medoid's set. 
   
-A console output will be written with a summary for each numlocal value :
+A console output will be written with a summary for each *numlocal* value :
 
 ```R
 CLARANS ALGORITHM
@@ -202,7 +202,7 @@ The plot parameter determines if the quality plot must be render. If true, the f
 knitr::include_graphics("C:/Projet_Bachelor/projet-de-bachelor/img_doc/clarans_dist_graph.png")
 ```
 
-Again, this quality graph can be created with a clarans_seq object with the function :
+Again, this quality graph can be created with a *clarans_seq* object with the function :
 
 ```R
 plot(my_cluster2)
@@ -220,14 +220,14 @@ where *x_j* is an object in the dataset without outliers *S*, *i* is the cluster
 
 **Warning** this function has not been fully tested.
 
-### Research of the best clutering
+### Partitioning sequences
 
 This function can be used as follow : 
 ```R
 my_cluster3 <- fuzzy_clust(mvad.seq,nb_sample = 14, size_sample = 50, plot = TRUE,
 +   threshold = 7, max_iter = 10, p=5)
 ```
-The main parameters are the number cluster, the number of subsets (nb_sample) and the size of each one of them (size_sample) as in the clara_clust() function, the threshold to exclude outliers (threshold), the maximal number of iterations to find the best set of medoids (max_iter) and the number of candidate to test to find a better medoid (p). 
+The main parameters are the number of clusters (*nb_cluster*), the number of subsets (*nb_sample*) and the size of each one of them (*size_sample*) as in the *clara_clust()* function, the threshold to exclude outliers (*threshold*), the maximal number of iterations to find the best set of medoids (*max_iter*) and the number of candidates to test to find a better medoid (*p*). 
 
 A console output will be written with a summary of each iterations index value  (the value of the function to minimize):
 
@@ -246,7 +246,7 @@ N°13 (Med: 497, 543, 602, 605) : 227.8510767599  |  N°14 (Med: 425, 350, 599, 
 
 [>] Minimum Index for Sample N°13
 
-Calcul time : 14.27 sec.
+Calculation time : 14.27 sec.
 ```
 The function will create an object of class *clarafuzzy_seq* with the following values :
 
@@ -262,30 +262,32 @@ The function will create an object of class *clarafuzzy_seq* with the following 
  $ evol.diss #the value of the best value found for each iteration
 ```
 
-The plot parameter determines if the quality plot must be render. If true, the following graph is drawn :
+The plot parameter determines if the quality plot must be rendered. If true, the following graph is drawn :
 
 ```{r , echo=FALSE, out.width = '40%',fig.align='center',fig.show='hold'}
 knitr::include_graphics("C:/Projet_Bachelor/projet-de-bachelor/img_doc/fuzzy_index.png")
 ```
 
-Again, this quality graph can be created with a clarafuzzy_seq object with the function :
+Again, this quality graph can be created with a *clarafuzzy_seq* object with the function :
 
 ```R
 plot(my_cluster3)
 ```
 
 ## Quality analysis
-A quality analysis can be execute with the help of the Davies-Bouldin function and the *TraMineR* package.  
-For the following examples, the object *my_cluster* coming from the previous CLARA clusterin is used but the quality analysis is working with every object from each functions.
+A quality analysis can be execute with the help of the Davies-Bouldin function or the *TraMineR* package.  
+For the following examples, the object *my_cluster* coming from the previous CLARA clustering is used but the quality analysis is working with every object from each function.
 
 ### Davies-Bouldin Index
 
-Davies-Bouldin provides a quality analysis index working with big datasets because it doen't require to compute the complete distance matrix. Indeed, this index aims to calculate the following equation :
+Davies-Bouldin provides a quality analysis index working with big datasets, because it doesn't require to compute the complete distance matrix. Indeed, this index aims to calculate the following equation :
 \begin{align*}
 \frac{1}{K} \sum_{k \in K} \max_{k' \neq k} \frac{diam(k) + diam(k')}{dist(k,k')}
 \end{align*}
 
 where K is the set of cluster, k and k' are two clusters in K, diam(k) is the diameter of the cluster k and dist(k,k') is the distance between the medoids of k and k'.
+
+This index calculates the ratio between the intra-cluster and the inter-cluster dispersion of a clustering. 
 
 The calculation of this index on an object coming from one of the three algorithms of this package can easily be done :
 
@@ -293,7 +295,7 @@ The calculation of this index on an object coming from one of the three algorith
 db <- davies_bouldin(my_cluster)
 ```
 
-The call of this function will produce a console output as follow :
+The call of this function will produce a console output as follows :
 
 ```R
 DAVIES-BOULDIN INDEX for clara_seq Clustering
@@ -301,9 +303,9 @@ DAVIES-BOULDIN INDEX for clara_seq Clustering
 Value of DB Index for a 4-clusters : 1.23197050017674
 Calcul time : 0.0100000000002183 sec.
 ```
-This index is very fast to compute even with a big dataset.
+This index is very fast to compute, even with a big dataset.
 
-A plot can also be rendered illustrating the value of the index for each cluster. The resulting global index is the mean of these different values :
+A plot can also be rendered, illustrating the value of the index for each cluster. The resulting global index is the mean of these different values :
 
 ```{r , echo=FALSE, out.width = '50%',fig.align='center',fig.show='hold'}
 knitr::include_graphics("C:/Projet_Bachelor/projet-de-bachelor/img_doc/db.png")
@@ -315,14 +317,13 @@ Finally, the function *davies_bouldin* has as output the value of the global ind
 
 ### Visual representation of the clustering
 
-With the package *TraMineR* it is possible to draw a graph with the sequence distribution. To do this, the function *seqdplot* will be use as follow : 
+With the package *TraMineR* it is possible to draw a graph with the sequences distribution. To do this, the function *seqdplot* will be use as follows : 
 
 ```R
 seqdplot(mvad.seq, my_cluster$clusters)
 ```
-A graph as the following can be obtained :
+A graph as the following can be obtained, showing the distribution and the frequency of the sequences  :
 
 ```{r , echo=FALSE, out.width = '100%',fig.align='center',fig.show='hold'}
 knitr::include_graphics("C:/Projet_Bachelor/projet-de-bachelor/img_doc/seqdplot.png")
 ```
-
